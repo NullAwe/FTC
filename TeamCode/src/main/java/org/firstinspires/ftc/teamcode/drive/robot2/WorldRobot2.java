@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.robot1;
+package org.firstinspires.ftc.teamcode.drive.robot2;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.RoadRunnerParameters;
 import org.firstinspires.ftc.teamcode.drive.RobotInitParameters;
 
 @Config
-public class WorldRobot1 extends HDWorldRobotBase {
+public class WorldRobot2 extends HDWorldRobotBase {
     /*
      * These are motor constants that should be listed online for your motors.
      */
@@ -26,6 +26,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * from DriveVelocityPIDTuner.
      */
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10, 13.9);
+    //    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+//            32767 / (MAX_RPM / 60 * TICKS_PER_REV));
     /*
      * These are physical constants that can be determined from your robot (including the track
      * width; it will be tune empirically later although a rough estimate is important). Users are
@@ -35,8 +37,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 1.03; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 11.6; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 14.2; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -44,9 +46,9 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(
-            1 / (MAX_RPM * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0), 0.0, 0.0);
-//    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(0.0135, 0.004, 0.0);
+//    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(
+//            1 / (MAX_RPM * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0), 0.0, 0.0);
+    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(0.0135, 0.004, 0.0);
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -55,10 +57,10 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 72;
-    public static double MAX_ACCEL = 72;
-    public static double MAX_ANG_VEL = 5.9; //Math.toRadians(262.03258124999996);
-    public static double MAX_ANG_ACCEL = 5.9;
+    public static double MAX_VEL = 65;
+    public static double MAX_ACCEL = 65;
+    public static double MAX_ANG_VEL = 5.46; //Math.toRadians(262.03258124999996);
+    public static double MAX_ANG_ACCEL = 5.46;
 
     /*
      Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
@@ -91,14 +93,14 @@ public class WorldRobot1 extends HDWorldRobotBase {
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 0.1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0.0);
-    public static double LATERAL_MULTIPLIER = 1.184;
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 0.4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0.0);
+    public static double LATERAL_MULTIPLIER = 1.5;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    public WorldRobot1(HardwareMap hardwareMap) {
+    public WorldRobot2(HardwareMap hardwareMap) {
         super(new RobotInitParameters(hardwareMap, createRoadRunnerParameters()));
 
         // Dummy code to make sure this is indeed robot 1
@@ -107,8 +109,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     private static RoadRunnerParameters createRoadRunnerParameters() {
         RoadRunnerParameters params = new RoadRunnerParameters();
-        params.runUsingEncoder = true;
-        params.usingTwoWheelTracking = false;
+        params.runUsingEncoder = false;
+        params.usingTwoWheelTracking = true;
         params.motorVeloPID = MOTOR_VELO_PID;
         params.ticksPerRev = TICKS_PER_REV;
         params.maxRPM = MAX_RPM;

@@ -74,7 +74,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
 
-        signalWebcam = hardwareMap.get(WebcamName.class, "signalWebcam");
+        signalWebcam = null; // hardwareMap.get(WebcamName.class, "signalWebcam");
         coneWebcam = null; // hardwareMap.get(WebcamName.class, "coneWebcam");
 
         initObjectDetectorResources(hardwareMap);
@@ -85,12 +85,14 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
      */
     private void initObjectDetectorResources(HardwareMap hardwareMap) {
         // Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = signalWebcam;
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        signalDetector = new CustomSignalDetector();
-        signalDetector.init(hardwareMap, vuforia, 2);
+        if (signalWebcam != null) {
+            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+            parameters.vuforiaLicenseKey = VUFORIA_KEY;
+            parameters.cameraName = signalWebcam;
+            vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            signalDetector = new CustomSignalDetector();
+            signalDetector.init(hardwareMap, vuforia, 2);
+        }
 
         if (coneWebcam != null) {
             cameraWrapper = new CameraWrapper(coneWebcam, 52, false);
@@ -128,6 +130,18 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         if (signalDetector == null) return -1;
 
         return signalDetector.detectSignal();
+    }
+
+    public boolean isBlueCone() {
+        return ImageProcessor.isBlueWithMinSaturation(ImageProcessor.ColorToHsv(getConeColor()));
+    }
+
+    public boolean isRedCone() {
+        return ImageProcessor.isRedWithMinSaturation(ImageProcessor.ColorToHsv(getConeColor()));
+    }
+
+    public boolean isPole() {
+        return ImageProcessor.isYellowWithMinSaturation(ImageProcessor.ColorToHsv(getConeColor()));
     }
 
     public boolean isCone() {
@@ -175,6 +189,31 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getClawClosePos();
     // End: utils for intake claw action.
 
+    // Begin: utils for intake guard action.
+    public void guardIntake() {
+        setIntakeGuardLeftPosition(getLeftGuardPos());
+        setIntakeGuardRightPosition(getRightGuardPos());
+    }
+
+    public void unguardIntake() {
+        setIntakeGuardLeftPosition(getLeftUnguardPos());
+        setIntakeGuardRightPosition(getRightUnguardPos());
+    }
+
+    public void setIntakeGuardLeftPosition(double pos) {
+        intakeGuardLeft.setPosition(pos);
+    }
+
+    public void setIntakeGuardRightPosition(double pos) {
+        intakeGuardRight.setPosition(pos);
+    }
+
+    public abstract double getLeftGuardPos();
+    public abstract double getRightGuardPos();
+    public abstract double getLeftUnguardPos();
+    public abstract double getRightUnguardPos();
+    // End: utils for intake guard action.
+
     // Begin: utils for intake slide actions
     public Task getIntakeSlideUpTask() {
         return new IntakeSlideTask(this, 12.0);
@@ -191,6 +230,10 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public void setIntakeSlidePower(double power) {
         intakeSlide.setPower(power);
+    }
+
+    public double getIntakeSlideTicksPerInch() {
+        return INTAKE_SLIDE_TICKS_PER_INCH;
     }
     // End: utils for intake slide actions
 
@@ -213,7 +256,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getIntakeRotateTicksPerRadian();
     // End: utils for intake rotate actions
 
-    // Begin: utils for delivery rotate actions
+    // Begin: utils for delivery slide actions
     public Task getDeliverySlideUpTask() {
         return new DeliverySlideTask(this, 30.0, 0.8, 700);
     }
@@ -230,7 +273,12 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public void setDeliverySlidePower(double power) {
         deliverySlide.setPower(power);
     }
-    // End: utils for delivery rotate actions
+
+    public double getDeliverySlideTicksPerInch() {
+        return DELIVERY_SLIDE_TICKS_PER_INCH;
+    }
+
+    // End: utils for delivery slide actions
 
     // Begin: utils for delivery rotate actions
     public Task getDeliveryRotateDeliveryTask() {
