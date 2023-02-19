@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.task;
 
-import org.firstinspires.ftc.teamcode.drive.FoldableArmRobot;
+import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
 // SignalDetectionTask the run signal detection in the background and can be restarted again and
 // again.
 public class SignalDetectionTask implements Task {
-    private final FoldableArmRobot robot;
+    private final HDWorldRobotBase robot;
     private int recognizedSignal = -1;
     private State state = State.INIT;
 
-    public SignalDetectionTask(FoldableArmRobot robot) {
+    public SignalDetectionTask(HDWorldRobotBase robot) {
         this.robot = robot;
     }
 
