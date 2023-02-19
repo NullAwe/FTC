@@ -27,8 +27,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class CameraWrapper implements CameraFrameSource {
-    public static final int kImageWidth = 640;
-    public static final int kImageHeight = 480;
+    public static final int kImageWidth = 320;
+    public static final int kImageHeight = 240;
     private static final String TAG = CameraWrapper.class.getSimpleName();
     private static final int FRAME_QUEUE_CAPACITY = 2;
 

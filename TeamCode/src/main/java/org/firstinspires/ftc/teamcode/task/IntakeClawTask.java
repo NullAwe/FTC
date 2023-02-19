@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.task;
 
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
+// Speed servo with 90 rpm under 4.8v and 270 degree max
 public class IntakeClawTask extends TimedTask {
 
     // The value is computed based on Speed servo (gobilda 2000-0025-0003).

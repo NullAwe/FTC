@@ -30,19 +30,19 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private static final String TAG = HDRobotBase.class.getSimpleName();
 
     // Constant for intake rotate actions
-    protected final static double INTAKE_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(300.0);
+    protected final static double INTAKE_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(270.0);
     // Constant for intake lift actions
-    private final static double INTAKE_SLIDE_TICKS_PER_REVOLUTION = 537.7;
-    private final static double INTAKE_SLIDE_WHEEL_RADIUS = 1.0;
+    private final static double INTAKE_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
+    private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 100.0 / 25.4;
     private final static double INTAKE_SLIDE_TICKS_PER_INCH =
-            INTAKE_SLIDE_TICKS_PER_REVOLUTION / 2 / Math.PI / INTAKE_SLIDE_WHEEL_RADIUS;
+            INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
     // Constant for delivery rotate actions
-    protected final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(300.0);
+    protected final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 4.5 / 5 / 2 / Math.PI;
     // Constant for delivery slide actions
-    private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 537.7;
-    private final static double DELIVERY_SLIDE_WHEEL_RADIUS = 1.0;
+    private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
+    private final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 100.0 / 25.4;
     private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
-            DELIVERY_SLIDE_TICKS_PER_REVOLUTION / 2 / Math.PI / DELIVERY_SLIDE_WHEEL_RADIUS;
+            DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
 
 
     private final Servo intakeClaw;

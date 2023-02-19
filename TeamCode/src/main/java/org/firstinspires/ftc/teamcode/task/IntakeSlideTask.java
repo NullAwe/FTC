@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.task;
 
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
+// GoBilda motor 1150rpm with pulley 100mm per resolution
 public class IntakeSlideTask extends TimedTask {
     private final HDWorldRobotBase robot;
     private final double targetHeight;

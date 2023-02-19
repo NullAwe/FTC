@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.task;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
+// 5-turn servo 90/115rpm at 4.8/6.0V with 1:5 gear ratio
 public class DeliveryRotateTask extends TimedTask {
     private final HDWorldRobotBase robot;
     private final double angleRadian;

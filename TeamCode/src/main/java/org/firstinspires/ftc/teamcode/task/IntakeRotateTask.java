@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.task;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
+// Speed servo with 90 rpm under 4.8v and 270 degree max
 public class IntakeRotateTask extends TimedTask {
     private final HDWorldRobotBase robot;
     private final double angleRadian;
