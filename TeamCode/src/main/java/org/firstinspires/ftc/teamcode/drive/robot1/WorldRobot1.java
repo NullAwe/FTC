@@ -143,7 +143,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getClawOpenPos() {
-        return 0.68;
+        return 0.46;
     }
 
     @Override
@@ -173,7 +173,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getIntakeRotateZeroAnglePos() {
-        return 0.2;
+        return 0.78;
     }
 
     @Override
@@ -183,7 +183,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getDeliveryRotateZeroAnglePos() {
-        return 0.2;
+        return 0.36;
     }
 
     @Override
