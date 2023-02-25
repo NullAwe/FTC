@@ -33,14 +33,14 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     protected final static double INTAKE_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(270.0);
     // Constant for intake lift actions
     private final static double INTAKE_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
-    private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 100.0 / 25.4;
+    private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 4.46;
     private final static double INTAKE_SLIDE_TICKS_PER_INCH =
             INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
     // Constant for delivery rotate actions
     protected final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 4.5 / 5 / 2 / Math.PI;
     // Constant for delivery slide actions
     private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
-    private final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 100.0 / 25.4;
+    private final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 4.42;
     private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
             DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
 
@@ -73,6 +73,8 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         intakeRotate = hardwareMap.get(Servo.class, "intakeRotate");
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
+
+        intakeSlide.setMode();
 
         signalWebcam = null; // hardwareMap.get(WebcamName.class, "signalWebcam");
         coneWebcam = null; // hardwareMap.get(WebcamName.class, "coneWebcam");
@@ -266,7 +268,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public void setDeliverySlideHeight(double height) {
-        deliverySlide.setTargetPosition((int) (height * DELIVERY_SLIDE_TICKS_PER_INCH));
+        deliverySlide.setTargetPosition((int) (height * getDeliverySlideTicksPerInch()));
         deliverySlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -275,7 +277,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public double getDeliverySlideTicksPerInch() {
-        return DELIVERY_SLIDE_TICKS_PER_INCH;
+        return -DELIVERY_SLIDE_TICKS_PER_INCH;
     }
 
     // End: utils for delivery slide actions

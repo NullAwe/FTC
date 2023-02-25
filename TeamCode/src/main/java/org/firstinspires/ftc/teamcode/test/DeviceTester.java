@@ -36,11 +36,11 @@ public class DeviceTester extends LinearOpMode {
     public static int ACTIVE_CAMERA = -1; // 0: arm camera, 1: claw camera, others: none
 
     public static class ServoPos {
-        public double intakeClaw = 0.46;
-        public double intakeRotate = 0.78;
+        public double intakeClaw = 0.55;
+        public double intakeRotate = 0.41;
         public double intakeGuardLeft = 0.5;
         public double intakeGuardRight = 0.5;
-        public double deliveryRotate = 0.36;
+        public double deliveryRotate = 0.37;
     }
 
     public static class MotorPos {
