@@ -14,7 +14,7 @@ public class IntakeSlideTask extends TimedTask {
     }
 
     public IntakeSlideTask(HDWorldRobotBase robot, double height, double power) {
-        this(robot, height, power, 400);
+        this(robot, height, power, height < 0.5 ? 1000 : 500);
     }
     public IntakeSlideTask(HDWorldRobotBase robot, double height, double power,
             int finishTimeMillis) {
@@ -31,6 +31,17 @@ public class IntakeSlideTask extends TimedTask {
             robot.setIntakeSlideHeight(targetHeight);
             robot.setIntakeSlidePower(power);
         }
+        if (targetHeight < 0.5 && robot.getIntakeSlidePositionInches() < targetHeight + 0.1) {
+            cancel();
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public void cancel() {
+        if (targetHeight < 0.5) {
+            robot.setIntakeSlidePower(0.0);
+        }
     }
 }

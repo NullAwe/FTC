@@ -17,7 +17,7 @@
             <Servo name="intakeGuardLeft" port="2" />
             <Servo name="intakeGuardRight" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
-            <RevColorSensorV3 name="clawColorSensor" port="0" bus="1" />
+            <RevColorSensorV3 name="clawColorSensor" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
 <!--    <Webcam name="armWebcam" serialNumber="F9A49060" />-->

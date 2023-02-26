@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.task;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 
 // GoBilda motor 1150rpm with pulley 100mm per resolution
@@ -14,7 +16,7 @@ public class DeliverySlideTask extends TimedTask {
     }
 
     public DeliverySlideTask(HDWorldRobotBase robot, double height, double power) {
-        this(robot, height, power, 700);
+        this(robot, height, power, height < 1 ? 1400 : 700);
     }
     public DeliverySlideTask(HDWorldRobotBase robot, double height, double power,
             int finishTimeMillis) {
@@ -31,6 +33,17 @@ public class DeliverySlideTask extends TimedTask {
             robot.setDeliverySlideHeight(targetHeight);
             robot.setDeliverySlidePower(power);
         }
+        if (targetHeight < 1 && robot.getDeliverySlidePositionInches() < targetHeight + 0.1) {
+            cancel();
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public void cancel() {
+        if (targetHeight < 1) {
+            robot.setDeliverySlidePower(0.0);
+        }
     }
 }

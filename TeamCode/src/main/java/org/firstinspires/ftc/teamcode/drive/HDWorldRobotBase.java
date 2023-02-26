@@ -74,7 +74,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
 
-        intakeSlide.setMode();
+        intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         signalWebcam = null; // hardwareMap.get(WebcamName.class, "signalWebcam");
         coneWebcam = null; // hardwareMap.get(WebcamName.class, "coneWebcam");
@@ -237,6 +237,10 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public double getIntakeSlideTicksPerInch() {
         return INTAKE_SLIDE_TICKS_PER_INCH;
     }
+
+    public double getIntakeSlidePositionInches() {
+        return intakeSlide.getCurrentPosition() / getIntakeSlideTicksPerInch();
+    }
     // End: utils for intake slide actions
 
     // Begin: utils for intake rotate actions
@@ -278,6 +282,10 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public double getDeliverySlideTicksPerInch() {
         return -DELIVERY_SLIDE_TICKS_PER_INCH;
+    }
+
+    public double getDeliverySlidePositionInches() {
+        return deliverySlide.getCurrentPosition() / getDeliverySlideTicksPerInch();
     }
 
     // End: utils for delivery slide actions

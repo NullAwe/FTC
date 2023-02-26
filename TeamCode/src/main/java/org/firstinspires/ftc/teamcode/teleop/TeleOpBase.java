@@ -9,9 +9,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerParameters;
+import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
 import org.firstinspires.ftc.teamcode.task.IntakeClawTask;
+import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
+import org.firstinspires.ftc.teamcode.task.IntakeSlideTask;
 import org.firstinspires.ftc.teamcode.task.ParallelTask;
 import org.firstinspires.ftc.teamcode.task.SeriesTask;
 import org.firstinspires.ftc.teamcode.task.SleepTask;
@@ -32,7 +36,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     // Constants for control driving experience
     public static double ANGULAR_VEL_FACTOR = 0.7;
     public static int RAMP_UP_TIME_MILLIS = 600;
-    public static int RAMP_DOWN_TIME_MILLIS = 20;
+    public static int RAMP_DOWN_TIME_MILLIS = 19;
 
     protected final ElapsedTime cycleTime = new ElapsedTime();
     private final FtcDashboard ftcDashboard = FtcDashboard.getInstance();
@@ -41,10 +45,23 @@ public abstract class TeleOpBase extends LinearOpMode {
     private Pose2d prevPower = new Pose2d(0.0, 0.0, 0.0);
     private Task presetTask = null;
 
+    // Testing
+    public static double INTAKE_HEIGHT_INCHES = 20;
+    public static double INTAKE_ROTATE_DROP_RADIANS = -1.6;
+    public static double INTAKE_ROTATE_RETURN_RADIANS = 0.0;
+    public static double INTAKE_HEIGHT_DOWN = 0;
+
+    public static double DELIVER_HEIGHT_HIGH = 22.5;
+    public static double DELIVER_HEIGHT_DOWN = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
         robot = createRobot(hardwareMap);
+
+        robot.setIntakeRotateAngle(0.0);
+        robot.openClaw();
+        robot.setDeliveryRotateAngle(0.0);
 
         GamePad gp1 = new GamePad(gamepad1);
         GamePad gp2 = new GamePad(gamepad2);
@@ -75,6 +92,26 @@ public abstract class TeleOpBase extends LinearOpMode {
                 }
             }
 
+            // Test:
+            if (gp2.onceA()) {
+                presetTask = new SeriesTask(
+                        new IntakeSlideTask(robot, INTAKE_HEIGHT_INCHES),
+                        new IntakeRotateTask(robot, INTAKE_ROTATE_DROP_RADIANS, AngleType.RADIAN));
+            } else if (gp2.onceB()) {
+                presetTask = new SeriesTask(
+                        new IntakeClawTask(robot, false),
+                        new IntakeRotateTask(robot, INTAKE_ROTATE_RETURN_RADIANS, AngleType.RADIAN),
+                        new SleepTask(300),
+                        new IntakeSlideTask(robot, INTAKE_HEIGHT_DOWN),
+                        new IntakeClawTask(robot, true));
+            }
+
+            if (gp2.onceDpadUp()) {
+                presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_HIGH);
+            } else if (gp2.onceDpadDown()) {
+                presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_DOWN);
+            }
+
             telemetry.update();
 
             gp1.update();
@@ -92,10 +129,7 @@ public abstract class TeleOpBase extends LinearOpMode {
 
     private SeriesTask getPickUpConeTask() {
         return new SeriesTask(
-                new IntakeClawTask(robot, /*open=*/false),
-                new ParallelTask(robot.getIntakeSlideUpTask(),
-                        new SeriesTask(new SleepTask(100),
-                                robot.getIntakeRotateDeliveryTask())));
+                new IntakeClawTask(robot, /*open=*/false));
     }
 
     private void driveRobot(GamePad gp1) {
