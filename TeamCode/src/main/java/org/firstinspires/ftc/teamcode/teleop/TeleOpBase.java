@@ -37,6 +37,8 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static double ANGULAR_VEL_FACTOR = 0.7;
     public static int RAMP_UP_TIME_MILLIS = 600;
     public static int RAMP_DOWN_TIME_MILLIS = 19;
+    public static double INTAKE_SLIDER_POWER = 1.0;
+    public static double DELIVERY_POWER = 1.0;
 
     protected final ElapsedTime cycleTime = new ElapsedTime();
     private final FtcDashboard ftcDashboard = FtcDashboard.getInstance();
@@ -51,8 +53,18 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static double INTAKE_ROTATE_RETURN_RADIANS = 0.0;
     public static double INTAKE_HEIGHT_DOWN = 0;
 
-    public static double DELIVER_HEIGHT_HIGH = 22.5;
+    public static double DELIVER_HEIGHT_HIGH = 22;
+    public static double DELIVER_HEIGHT_MID = 10.5;
     public static double DELIVER_HEIGHT_DOWN = 0;
+
+    private double INTAKE_HEIGHT = 0.0;
+    private double DELIVER_HEIGHT = 0.0;
+    private double DELIVERY_ROTATE = 0.0;
+
+    public static double DELIVERY_ANGLE_ROTATE_RADIAN = 1.25;
+
+    //
+    GamePad gp1, gp2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,10 +73,10 @@ public abstract class TeleOpBase extends LinearOpMode {
 
         robot.setIntakeRotateAngle(0.0);
         robot.openClaw();
-        robot.setDeliveryRotateAngle(0.0);
+        robot.setDeliveryRotateAngle(DELIVERY_ROTATE);
 
-        GamePad gp1 = new GamePad(gamepad1);
-        GamePad gp2 = new GamePad(gamepad2);
+        gp1 = new GamePad(gamepad1);
+        gp2 = new GamePad(gamepad2);
 
         waitForStart();
 
@@ -92,25 +104,10 @@ public abstract class TeleOpBase extends LinearOpMode {
                 }
             }
 
-            // Test:
-            if (gp2.onceA()) {
-                presetTask = new SeriesTask(
-                        new IntakeSlideTask(robot, INTAKE_HEIGHT_INCHES),
-                        new IntakeRotateTask(robot, INTAKE_ROTATE_DROP_RADIANS, AngleType.RADIAN));
-            } else if (gp2.onceB()) {
-                presetTask = new SeriesTask(
-                        new IntakeClawTask(robot, false),
-                        new IntakeRotateTask(robot, INTAKE_ROTATE_RETURN_RADIANS, AngleType.RADIAN),
-                        new SleepTask(300),
-                        new IntakeSlideTask(robot, INTAKE_HEIGHT_DOWN),
-                        new IntakeClawTask(robot, true));
-            }
+            doIntake();
+            doDelivery();
 
-            if (gp2.onceDpadUp()) {
-                presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_HIGH);
-            } else if (gp2.onceDpadDown()) {
-                presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_DOWN);
-            }
+            // Test:
 
             telemetry.update();
 
@@ -125,6 +122,70 @@ public abstract class TeleOpBase extends LinearOpMode {
                 }
             }
         }
+    }
+
+    private void doIntake() {
+        if (gp2.onceB() && !robot.isClawOpen()) {
+            presetTask = new SeriesTask(
+                    new IntakeSlideTask(robot, INTAKE_HEIGHT_INCHES),
+                    new IntakeRotateTask(robot, INTAKE_ROTATE_DROP_RADIANS, AngleType.RADIAN));
+            INTAKE_HEIGHT = INTAKE_HEIGHT_INCHES;
+        } else if (gp2.onceA()) {
+            presetTask = new SeriesTask(
+                    new IntakeClawTask(robot, false),
+                    new IntakeRotateTask(robot, INTAKE_ROTATE_RETURN_RADIANS, AngleType.RADIAN),
+                    new SleepTask(300),
+                    new IntakeSlideTask(robot, INTAKE_HEIGHT_DOWN),
+                    new IntakeClawTask(robot, true));
+            INTAKE_HEIGHT = INTAKE_HEIGHT_DOWN;
+        }
+        if (presetTask == null) {
+            if (Math.abs(gp2.rightStickY()) > 0.1) {
+                INTAKE_HEIGHT -= gp2.rightStickY() / 10;
+                INTAKE_HEIGHT = Math.max(Math.min(INTAKE_HEIGHT, 20), 0);
+                robot.setIntakeSlideHeight(INTAKE_HEIGHT);
+                robot.setIntakeSlidePower(INTAKE_SLIDER_POWER);
+            } else if (gp2.onceDpadUp()) {
+                INTAKE_HEIGHT += 1.25;
+                INTAKE_HEIGHT = Math.max(Math.min(INTAKE_HEIGHT, 20), 0);
+                robot.setIntakeSlideHeight(INTAKE_HEIGHT);
+                robot.setIntakeSlidePower(INTAKE_SLIDER_POWER);
+            } else if (gp2.onceDpadDown()) {
+                INTAKE_HEIGHT -= 1.25;
+                INTAKE_HEIGHT = Math.max(Math.min(INTAKE_HEIGHT, 20), 0);
+                robot.setIntakeSlideHeight(INTAKE_HEIGHT);
+                robot.setIntakeSlidePower(INTAKE_SLIDER_POWER);
+            }
+        }
+    }
+
+    private void doDelivery() {
+        if (gp2.rightBumper() && gp2.leftBumper()) {
+            presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_DOWN, DELIVERY_POWER);
+            DELIVER_HEIGHT = DELIVER_HEIGHT_DOWN;
+        } else if (gp2.onceRightBumper()) {
+            presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_HIGH, DELIVERY_POWER);
+            DELIVER_HEIGHT = DELIVER_HEIGHT_HIGH;
+        } else if (gp2.onceLeftBumper()) {
+            presetTask = new DeliverySlideTask(robot, DELIVER_HEIGHT_MID, DELIVERY_POWER);
+            DELIVER_HEIGHT = DELIVER_HEIGHT_MID;
+        }
+        if (presetTask == null) {
+            if (Math.abs(gp2.leftStickY()) > 0.1) {
+                DELIVER_HEIGHT -= gp2.leftStickY() / 10;
+                DELIVER_HEIGHT = Math.max(Math.min(DELIVER_HEIGHT, 23), 0);
+                robot.setDeliverySlideHeight(DELIVER_HEIGHT);
+                robot.setDeliverySlidePower(DELIVERY_POWER);
+            }
+        }
+        if (gp2.leftTrigger() > 0.1 && gp2.rightTrigger() > 0.1) {
+            DELIVERY_ROTATE = 0;
+        } else if (gp2.onceLeftTrigger()) {
+            DELIVERY_ROTATE = DELIVERY_ANGLE_ROTATE_RADIAN;
+        } else if (gp2.onceRightTrigger()) {
+            DELIVERY_ROTATE = -DELIVERY_ANGLE_ROTATE_RADIAN;
+        }
+        robot.setDeliveryRotateAngle(DELIVERY_ROTATE);
     }
 
     private SeriesTask getPickUpConeTask() {
