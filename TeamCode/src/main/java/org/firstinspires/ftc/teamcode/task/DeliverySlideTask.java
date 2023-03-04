@@ -16,7 +16,7 @@ public class DeliverySlideTask extends TimedTask {
     }
 
     public DeliverySlideTask(HDWorldRobotBase robot, double height, double power) {
-        this(robot, height, power, height < 1 ? 1400 : 700);
+        this(robot, height, power, height < 1 ? 1500 : 700);
     }
     public DeliverySlideTask(HDWorldRobotBase robot, double height, double power,
             int finishTimeMillis) {
@@ -33,7 +33,7 @@ public class DeliverySlideTask extends TimedTask {
             robot.setDeliverySlideHeight(targetHeight);
             robot.setDeliverySlidePower(power);
         }
-        if (targetHeight < 1 && robot.getDeliverySlidePositionInches() < targetHeight + 0.1) {
+        if (targetHeight < 0.001 && robot.getDeliverySlidePositionInches() < 0.1) {
             cancel();
             return true;
         }

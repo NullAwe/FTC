@@ -143,7 +143,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getClawOpenPos() {
-        return 0.65;
+        return 0.60;
     }
 
     @Override
