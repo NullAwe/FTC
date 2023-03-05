@@ -56,8 +56,8 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
     public static int DELIVERY_DELAY_MILLIS = 300;
 
-    public static double DELIVERY_HEIGHT_HIGH = 33;
-    public static double DELIVERY_HEIGHT_MID = 15.5;
+    public static double DELIVERY_HEIGHT_HIGH = 31;
+    public static double DELIVERY_HEIGHT_MID = 14;
     public static double DELIVERY_HEIGHT_DOWN = 0;
 
     private double intakeHeight = 0.0;
@@ -104,7 +104,8 @@ public abstract class TeleOpBase extends LinearOpMode {
                     doDelivery();
                     if (robot.isCone() && robot.getConeDistanceInch() < MAX_CONE_GRABBING_DIST &&
                             robot.isClawOpen() && releaseTime.milliseconds() > MIN_GAP_MILLIS) {
-                        presetTask = getPickUpConeTask();
+//                        presetTask = getPickUpConeTask();
+                        robot.toggleClaw();
                     }
                 }
             }
