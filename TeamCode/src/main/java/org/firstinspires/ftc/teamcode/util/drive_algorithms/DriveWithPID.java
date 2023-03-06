@@ -80,6 +80,8 @@ public class DriveWithPID {
         rightFront = robot.getRightFront();
         rightRear = robot.getRightRear();
         imu = robot.getImu();
+        pidDrive = new PIDController(10.0, 0.0, 0.0);
+        pidRotate = new PIDController(1.0, 0.0, 0.0);
     }
     /**
      * Resets the cumulative angle tracking to zero.
