@@ -346,5 +346,21 @@ public abstract class HDRobotBase extends MecanumDrive {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
+    public DcMotorEx getLeftFront() {
+        return leftFront;
+    }
+
+    public DcMotorEx getLeftRear() {
+        return leftRear;
+    }
+
+    public DcMotorEx getRightFront() {
+        return rightFront;
+    }
+
+    public DcMotorEx getRightRear() {
+        return rightRear;
+    }
+
     public abstract Double getExternalHeadingVelocity();
 }
