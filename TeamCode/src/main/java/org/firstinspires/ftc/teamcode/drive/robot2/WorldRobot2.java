@@ -104,13 +104,13 @@ public class WorldRobot2 extends HDWorldRobotBase {
         super(new RobotInitParameters(hardwareMap, createRoadRunnerParameters()));
 
         // Dummy code to make sure this is indeed robot 1
-        Servo nonExistServo = hardwareMap.get(Servo.class, "for_robot_1_only");
+        Servo nonExistServo = hardwareMap.get(Servo.class, "for_robot_2_only");
     }
 
     private static RoadRunnerParameters createRoadRunnerParameters() {
         RoadRunnerParameters params = new RoadRunnerParameters();
-        params.runUsingEncoder = false;
-        params.usingTwoWheelTracking = true;
+        params.runUsingEncoder = true;
+        params.usingTwoWheelTracking = false;
         params.motorVeloPID = MOTOR_VELO_PID;
         params.ticksPerRev = TICKS_PER_REV;
         params.maxRPM = MAX_RPM;
@@ -145,37 +145,17 @@ public class WorldRobot2 extends HDWorldRobotBase {
 
     @Override
     public double getClawOpenPos() {
-        return 0.68;
+        return 0.95;
     }
 
     @Override
     public double getClawClosePos() {
-        return 0.5;
-    }
-
-    @Override
-    public double getLeftGuardPos() {
-        return 0.68;
-    }
-
-    @Override
-    public double getRightGuardPos() {
-        return 0.68;
-    }
-
-    @Override
-    public double getLeftUnguardPos() {
-        return 0.3;
-    }
-
-    @Override
-    public double getRightUnguardPos() {
-        return 0.3;
+        return 0.7;
     }
 
     @Override
     public double getIntakeRotateZeroAnglePos() {
-        return 0.2;
+        return 0.71;
     }
 
     @Override
@@ -183,10 +163,23 @@ public class WorldRobot2 extends HDWorldRobotBase {
         return INTAKE_ROTATE_TICKS_PER_RADIAN;
     }
 
+    // Constant for delivery slide actions
+    private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
+    public final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 4.52;
+    private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
+            DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
+
+    public double getDeliverySlideTicksPerInch() {
+        return DELIVERY_SLIDE_TICKS_PER_INCH;
+    }
+
     @Override
     public double getDeliveryRotateZeroAnglePos() {
-        return 0.2;
+        return 0.53;
     }
+
+    // Constant for delivery rotate actions
+    private final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 4.5 / 5 / 2 / Math.PI;
 
     @Override
     public double getDeliveryRotateTicksPerRadian() {

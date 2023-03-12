@@ -40,25 +40,17 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static double INTAKE_SLIDER_POWER = 1.0;
     public static double DELIVERY_POWER = 1.0;
 
+    // Testing
+    public static int INTAKE_ROTATE_DELAY_MILLIS = 300;
+    public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
+    public static int DELIVERY_DELAY_MILLIS = 300;
+
     protected final ElapsedTime cycleTime = new ElapsedTime();
     private final FtcDashboard ftcDashboard = FtcDashboard.getInstance();
     protected HDWorldRobotBase robot;
     private final ElapsedTime releaseTime = new ElapsedTime();
     private Pose2d prevPower = new Pose2d(0.0, 0.0, 0.0);
     private Task presetTask = null;
-
-    // Testing
-    public static double INTAKE_HEIGHT_INCHES = 18;
-    public static double INTAKE_ROTATE_DROP_DEGREE = -100;
-    public static double INTAKE_ROTATE_RETURN_DEGREE = 0.0;
-    public static double INTAKE_HEIGHT_DOWN = 0;
-    public static int INTAKE_ROTATE_DELAY_MILLIS = 300;
-    public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
-    public static int DELIVERY_DELAY_MILLIS = 300;
-
-    public static double DELIVERY_HEIGHT_HIGH = 31;
-    public static double DELIVERY_HEIGHT_MID = 14;
-    public static double DELIVERY_HEIGHT_DOWN = 0;
 
     private double intakeHeight = 0.0;
     private double deliveryHeight = 0.0;
@@ -151,22 +143,22 @@ public abstract class TeleOpBase extends LinearOpMode {
 
     private void doDelivery() {
         if (gp2.rightBumper() && gp2.leftBumper()) {
-            presetTask = new DeliverySlideTask(robot, DELIVERY_HEIGHT_DOWN, DELIVERY_POWER);
-            deliveryHeight = DELIVERY_HEIGHT_DOWN;
+            deliveryHeight = 0;
+            presetTask = new DeliverySlideTask(robot, deliveryHeight, DELIVERY_POWER);
         } else if (gp2.onceRightBumper()) {
+            deliveryHeight = getDeliveryHeightHigh();
             presetTask = new ParallelTask(
                     new SeriesTask(
                             new SleepTask(DELIVERY_DELAY_MILLIS),
-                            new DeliverySlideTask(robot, DELIVERY_HEIGHT_HIGH, DELIVERY_POWER)),
+                            new DeliverySlideTask(robot, deliveryHeight, DELIVERY_POWER)),
                     getResetIntakeTask());
-            deliveryHeight = DELIVERY_HEIGHT_HIGH;
         } else if (gp2.onceLeftBumper()) {
+            deliveryHeight = getDeliveryHeightMedium();
             presetTask = new ParallelTask(
                     new SeriesTask(
                             new SleepTask(DELIVERY_DELAY_MILLIS),
-                            new DeliverySlideTask(robot, DELIVERY_HEIGHT_MID, DELIVERY_POWER)),
+                            new DeliverySlideTask(robot, deliveryHeight, DELIVERY_POWER)),
                     getResetIntakeTask());
-            deliveryHeight = DELIVERY_HEIGHT_MID;
         }
         if (presetTask == null) {
             if (Math.abs(gp2.leftStickY()) > 0.1) {
@@ -186,25 +178,25 @@ public abstract class TeleOpBase extends LinearOpMode {
     }
 
     private SeriesTask getPickUpConeTask() {
-        intakeHeight = INTAKE_HEIGHT_INCHES;
+        intakeHeight = this.getIntakeDeliveryHeightInch();
         return new SeriesTask(
                 new IntakeClawTask(robot, /*open=*/false),
                 new ParallelTask(
-                        new IntakeSlideTask(robot, INTAKE_HEIGHT_INCHES, INTAKE_SLIDER_POWER),
+                        new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER),
                         new SeriesTask(
                                 new SleepTask(INTAKE_ROTATE_DELAY_MILLIS),
-                                new IntakeRotateTask(robot, INTAKE_ROTATE_DROP_DEGREE,
+                                new IntakeRotateTask(robot, getIntakeDeliveryRotateDegree(),
                                         AngleType.DEGREE))));
     }
 
     private SeriesTask getResetIntakeTask() {
-        intakeHeight = INTAKE_HEIGHT_DOWN;
+        intakeHeight = 0;
         return new SeriesTask(
                 new IntakeClawTask(robot, true),
                 new ParallelTask(
                         new IntakeRotateTask(robot, 0, AngleType.DEGREE),
                         new IntakeClawTask(robot, false)),
-                new IntakeSlideTask(robot, INTAKE_HEIGHT_DOWN, INTAKE_SLIDER_POWER),
+                new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER),
                 new IntakeClawTask(robot, true));
     }
 
@@ -276,4 +268,9 @@ public abstract class TeleOpBase extends LinearOpMode {
     }
 
     protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap);
+
+    protected abstract double getIntakeDeliveryHeightInch();
+    protected abstract double getIntakeDeliveryRotateDegree();
+    protected abstract double getDeliveryHeightHigh();
+    protected abstract double getDeliveryHeightMedium();
 }

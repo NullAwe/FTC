@@ -152,26 +152,6 @@ public class WorldRobot1 extends HDWorldRobotBase {
     }
 
     @Override
-    public double getLeftGuardPos() {
-        return 0.68;
-    }
-
-    @Override
-    public double getRightGuardPos() {
-        return 0.68;
-    }
-
-    @Override
-    public double getLeftUnguardPos() {
-        return 0.3;
-    }
-
-    @Override
-    public double getRightUnguardPos() {
-        return 0.3;
-    }
-
-    @Override
     public double getIntakeRotateZeroAnglePos() {
         return 0.41;
     }
@@ -181,10 +161,24 @@ public class WorldRobot1 extends HDWorldRobotBase {
         return INTAKE_ROTATE_TICKS_PER_RADIAN;
     }
 
+    // Constant for delivery slide actions
+    private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
+    private final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 4.42;
+    private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
+            DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
+
+    @Override
+    public double getDeliverySlideTicksPerInch() {
+        return -DELIVERY_SLIDE_TICKS_PER_INCH;
+    }
+
     @Override
     public double getDeliveryRotateZeroAnglePos() {
         return 0.37;
     }
+
+    // Constant for delivery rotate actions
+    private final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 4.5 / 5 / 2 / Math.PI;
 
     @Override
     public double getDeliveryRotateTicksPerRadian() {

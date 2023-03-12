@@ -36,18 +36,8 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 4.46;
     private final static double INTAKE_SLIDE_TICKS_PER_INCH =
             INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
-    // Constant for delivery rotate actions
-    protected final static double DELIVERY_ROTATE_TICKS_PER_RADIAN = 4.5 / 5 / 2 / Math.PI;
-    // Constant for delivery slide actions
-    private final static double DELIVERY_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
-    private final static double DELIVERY_SLIDE_INCH_PER_REVOLUTION = 4.42;
-    private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
-            DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
-
 
     private final Servo intakeClaw;
-    private final Servo intakeGuardLeft;
-    private final Servo intakeGuardRight;
     private final Servo intakeRotate;
     private final Servo deliveryRotate;
     private final DcMotorEx intakeSlide;
@@ -68,8 +58,6 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliverySlide = hardwareMap.get(DcMotorEx.class, "deliverySlide");
         intakeSlide = hardwareMap.get(DcMotorEx.class, "intakeSlide");
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
-        intakeGuardLeft = hardwareMap.get(Servo.class, "intakeGuardLeft");
-        intakeGuardRight = hardwareMap.get(Servo.class, "intakeGuardRight");
         intakeRotate = hardwareMap.get(Servo.class, "intakeRotate");
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
@@ -191,31 +179,6 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getClawClosePos();
     // End: utils for intake claw action.
 
-    // Begin: utils for intake guard action.
-    public void guardIntake() {
-        setIntakeGuardLeftPosition(getLeftGuardPos());
-        setIntakeGuardRightPosition(getRightGuardPos());
-    }
-
-    public void unguardIntake() {
-        setIntakeGuardLeftPosition(getLeftUnguardPos());
-        setIntakeGuardRightPosition(getRightUnguardPos());
-    }
-
-    public void setIntakeGuardLeftPosition(double pos) {
-        intakeGuardLeft.setPosition(pos);
-    }
-
-    public void setIntakeGuardRightPosition(double pos) {
-        intakeGuardRight.setPosition(pos);
-    }
-
-    public abstract double getLeftGuardPos();
-    public abstract double getRightGuardPos();
-    public abstract double getLeftUnguardPos();
-    public abstract double getRightUnguardPos();
-    // End: utils for intake guard action.
-
     // Begin: utils for intake slide actions
     public Task getIntakeSlideUpTask() {
         return new IntakeSlideTask(this, 12.0);
@@ -280,9 +243,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliverySlide.setPower(power);
     }
 
-    public double getDeliverySlideTicksPerInch() {
-        return -DELIVERY_SLIDE_TICKS_PER_INCH;
-    }
+    public abstract double getDeliverySlideTicksPerInch();
 
     public double getDeliverySlidePositionInches() {
         return deliverySlide.getCurrentPosition() / getDeliverySlideTicksPerInch();

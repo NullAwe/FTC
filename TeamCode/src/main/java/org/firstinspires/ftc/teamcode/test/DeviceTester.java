@@ -38,8 +38,6 @@ public class DeviceTester extends LinearOpMode {
     public static class ServoPos {
         public double intakeClaw = 0.55;
         public double intakeRotate = 0.41;
-        public double intakeGuardLeft = 0.5;
-        public double intakeGuardRight = 0.5;
         public double deliveryRotate = 0.37;
     }
 
@@ -71,11 +69,9 @@ public class DeviceTester extends LinearOpMode {
                 null : new PoleDetector(robot.getCameraWrapper());
         ConeDetector coneCameraDebugger = robot.getCameraWrapper() == null ?
                 null : new ConeDetector(robot.getCameraWrapper());
-//        SERVO_POS.intakeClaw = robot.getClawOpenPos();
-//        SERVO_POS.intakeRotate = robot.getIntakeRotateZeroAnglePos();
-//        SERVO_POS.intakeGuardLeft = robot.getLeftUnguardPos();
-//        SERVO_POS.intakeGuardRight = robot.getRightUnguardPos();
-//        SERVO_POS.deliveryRotate = robot.getDeliveryRotateZeroAnglePos();
+        SERVO_POS.intakeClaw = robot.getClawOpenPos();
+        SERVO_POS.intakeRotate = robot.getIntakeRotateZeroAnglePos();
+        SERVO_POS.deliveryRotate = robot.getDeliveryRotateZeroAnglePos();
 
         gp1 = new GamePad(gamepad1);
         Field[] servoNames = SERVO_POS.getClass().getFields();
