@@ -217,7 +217,11 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public void setIntakeRotateAngle(double angleRadian) {
         intakeRotate.setPosition(
-                angleRadian * getIntakeRotateTicksPerRadian() + getIntakeRotateZeroAnglePos());
+                Math.min(Math.max(angleRadian * getIntakeRotateTicksPerRadian() + getIntakeRotateZeroAnglePos(), 0.0), 1.0));
+    }
+
+    public double getIntakeRotateAngle() {
+        return (intakeRotate.getPosition() - getIntakeRotateZeroAnglePos()) / getIntakeRotateTicksPerRadian();
     }
 
     public abstract double getIntakeRotateZeroAnglePos();

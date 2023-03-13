@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.drive.robot2.WorldRobot2;
 @TeleOp(name="Tele-Op - Robot 2", group="competition")
 public class TeleOpRobot2 extends TeleOpBase {
     public static double INTAKE_HEIGHT_INCHES = 19;
-    public static double INTAKE_ROTATE_DROP_DEGREE = -90;
-    public static double DELIVERY_HEIGHT_HIGH = 21;
+    public static double INTAKE_ROTATE_DROP_DEGREE = -96;
+    public static double DELIVERY_HEIGHT_HIGH = 22;
     public static double DELIVERY_HEIGHT_MID = 9;
 
     @Override
