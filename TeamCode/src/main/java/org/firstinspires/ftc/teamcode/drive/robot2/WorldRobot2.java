@@ -155,7 +155,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
 
     @Override
     public double getIntakeRotateZeroAnglePos() {
-        return 0.71;
+        return 0.72;
     }
 
     @Override

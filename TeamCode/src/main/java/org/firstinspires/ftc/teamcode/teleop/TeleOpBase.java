@@ -41,7 +41,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static double DELIVERY_POWER = 1.0;
 
     // Testing
-    public static int INTAKE_ROTATE_DELAY_MILLIS = 300;
+    public static int INTAKE_ROTATE_DELAY_MILLIS = 400;
     public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
     public static int DELIVERY_DELAY_MILLIS = 300;
 
@@ -189,7 +189,7 @@ public abstract class TeleOpBase extends LinearOpMode {
                                         AngleType.DEGREE)));
     }
     private Task getSecureConeTask() {
-//        intakeHeight = 2;
+        intakeHeight = 2;
         return new SeriesTask(
                 new IntakeClawTask(robot, /*open=*/false),
                 new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER));
