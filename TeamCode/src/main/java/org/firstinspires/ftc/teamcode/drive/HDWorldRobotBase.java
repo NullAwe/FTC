@@ -37,6 +37,10 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private final static double INTAKE_SLIDE_TICKS_PER_INCH =
             INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
 
+    // Cached Encoder values.
+    private int   intakeSlidePos = 0, deliverySlidePos = 0; // Encoder Values
+    private double intakeSlideVel = 0.0, deliverySlideVel = 0.0; // Velocities
+
     private final Servo intakeClaw;
     private final Servo intakeRotate;
     private final Servo deliveryRotate;
@@ -94,6 +98,14 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         } else {
             RobotLog.ee(TAG, "Failed to initialize claw camera");
         }
+    }
+
+    public void updateEncoderValues() {
+        intakeSlidePos = intakeSlide.getCurrentPosition();
+        deliverySlidePos = deliverySlide.getCurrentPosition();
+
+        intakeSlideVel = intakeSlide.getVelocity();
+        deliverySlideVel = deliverySlide.getVelocity();
     }
 
     public VuforiaLocalizer getVuforia() {
@@ -202,7 +214,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public double getIntakeSlidePositionInches() {
-        return intakeSlide.getCurrentPosition() / getIntakeSlideTicksPerInch();
+        return intakeSlidePos / getIntakeSlideTicksPerInch();
     }
     // End: utils for intake slide actions
 
@@ -250,7 +262,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getDeliverySlideTicksPerInch();
 
     public double getDeliverySlidePositionInches() {
-        return deliverySlide.getCurrentPosition() / getDeliverySlideTicksPerInch();
+        return deliverySlidePos / getDeliverySlideTicksPerInch();
     }
 
     // End: utils for delivery slide actions
