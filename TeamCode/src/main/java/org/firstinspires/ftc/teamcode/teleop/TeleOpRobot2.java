@@ -14,7 +14,7 @@ public class TeleOpRobot2 extends TeleOpBase {
     public static double INTAKE_HEIGHT_INCHES = 19;
     public static double INTAKE_ROTATE_DROP_DEGREE = -96;
     public static double DELIVERY_HEIGHT_HIGH = 22;
-    public static double DELIVERY_HEIGHT_MID = 9;
+    public static double DELIVERY_HEIGHT_MID = 10;
 
     @Override
     protected HDWorldRobotBase createRobot(HardwareMap hardwareMap) {

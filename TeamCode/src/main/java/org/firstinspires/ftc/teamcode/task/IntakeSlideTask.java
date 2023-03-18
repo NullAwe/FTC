@@ -41,7 +41,7 @@ public class IntakeSlideTask extends TimedTask {
     @Override
     public void cancel() {
         if (targetHeight < 0.5) {
-            robot.setIntakeSlidePower(0.0);
+//            robot.setIntakeSlidePower(0.0);
         }
     }
 }
