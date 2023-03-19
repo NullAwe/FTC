@@ -17,7 +17,7 @@ public class AutoBase extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        WorldRobot1 robot = new WorldRobot1(hardwareMap);
+        WorldRobot1 robot = new WorldRobot1(hardwareMap, telemetry);
         double dist = 16.0;
         DriveStraightTask task = new DriveStraightTask(robot, dist);
 

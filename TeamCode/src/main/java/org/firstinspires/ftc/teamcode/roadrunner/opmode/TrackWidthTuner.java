@@ -37,7 +37,7 @@ public class TrackWidthTuner extends LinearOpMode {
         Telemetry telemetry =
                 new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
         RoadRunnerParameters roadRunnerParameters = drive.getRoadRunnerParameters();
         // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading

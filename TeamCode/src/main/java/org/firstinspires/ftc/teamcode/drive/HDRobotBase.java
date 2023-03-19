@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -60,6 +61,9 @@ public abstract class HDRobotBase extends MecanumDrive {
     private final List<Integer> lastEncVels = new ArrayList<>();
     private double total = 0.0;
     private int num = 0;
+    protected ElapsedTime globalTimer = new ElapsedTime();
+    protected final HardwareMap hardwareMap;
+    protected final Telemetry telemetry;
 
     public HDRobotBase(RobotInitParameters initParameters) {
         super(initParameters.roadRunnerParams.feedforwardParams.kV,
@@ -70,7 +74,8 @@ public abstract class HDRobotBase extends MecanumDrive {
                 initParameters.roadRunnerParams.lateralMultiplier);
 
         this.roadRunnerParameters = initParameters.roadRunnerParams;
-        HardwareMap hardwareMap = initParameters.hardwareMap;
+        hardwareMap = initParameters.hardwareMap;
+        telemetry = initParameters.telemetry;
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 

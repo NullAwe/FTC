@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -62,7 +63,7 @@ public class DeviceTester extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        robot = (HDWorldRobotBase) createRobot(hardwareMap);
+        robot = (HDWorldRobotBase) createRobot(hardwareMap, telemetry);
         CameraDebugger armCameraDebugger = robot.getVuforiaBasedCameraSource() == null ?
                 null : new CameraDebugger(robot.getVuforiaBasedCameraSource());
         PoleDetector wristCameraDebugger = robot.getCameraWrapper() == null ?
@@ -81,20 +82,21 @@ public class DeviceTester extends LinearOpMode {
         }
 
         Field[] motorNames = MOTOR_POS.getClass().getFields();
-        Map<String, DcMotor> motors = new HashMap<>();
+        Map<String, DcMotorEx> motors = new HashMap<>();
         for (Field field : motorNames) {
-            DcMotor motor = hardwareMap.get(DcMotor.class, field.getName());
+            DcMotorEx motor = hardwareMap.get(DcMotorEx.class, field.getName());
             motors.put(field.getName(), motor);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        Field[] motorPowerNames = DRIVE_MOTOR_POWER.getClass().getFields();
-        Map<String, DcMotor> motorPowers = new HashMap<>();
-        for (Field field : motorPowerNames) {
-            DcMotor motor = hardwareMap.get(DcMotor.class, field.getName());
-            motorPowers.put(field.getName(), motor);
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Field[] driveMotorPowerNames = DRIVE_MOTOR_POWER.getClass().getFields();
+        Map<String, DcMotorEx> driveMotorPowers = new HashMap<>();
+        for (Field field : driveMotorPowerNames) {
+            DcMotorEx motor = hardwareMap.get(DcMotorEx.class, field.getName());
+            driveMotorPowers.put(field.getName(), motor);
+            motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setPower(0.4);
         }
 
         waitForStart();
@@ -104,6 +106,7 @@ public class DeviceTester extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
         while (opModeIsActive()) {
+            robot.updateEncoderValues();
             try {
                 for (Field field : servoNames) {
                     Servo servo = servos.get(field.getName());
@@ -118,13 +121,10 @@ public class DeviceTester extends LinearOpMode {
                                 field.getDouble(MOTOR_POS)));
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         motor.setPower(OTHER_MOTOR_POWER);
-                        int ticks = motor.getCurrentPosition();
-                        multipleTelemetry.addData("Other " + field.getName(), "%s ticks: %d",
-                                field.getName(), ticks);
                     }
                 }
-                for (Field field : motorPowerNames) {
-                    DcMotor motor = motorPowers.get(field.getName());
+                for (Field field : driveMotorPowerNames) {
+                    DcMotor motor = driveMotorPowers.get(field.getName());
                     if (motor != null) {
                         motor.setPower(field.getDouble(DRIVE_MOTOR_POWER));
                         int ticks = motor.getCurrentPosition();
@@ -144,13 +144,17 @@ public class DeviceTester extends LinearOpMode {
                     coneAngle = coneCameraDebugger.getConeAngle();
                 }
 
-                robot.setWeightedDrivePower(
-                        new Pose2d(-gp1.leftStickY(), -gp1.leftStickX(), -gp1.rightStickX()));
+//                robot.setWeightedDrivePower(
+//                        new Pose2d(-gp1.leftStickY(), -gp1.leftStickX(), -gp1.rightStickX()));
 
                 HSV hsv = ImageProcessor.ColorToHsv(robot.getConeColor());
-//                multipleTelemetry.addData("angles", "intake height: %f, delivery height: %f",
-//                        Math.toDegrees(robot.getIntakeHeight()),
-//                        Math.toDegrees(robot.getDeliveryHeight()));
+                multipleTelemetry.addData("angles", "intake angle: %f, delivery angle: %f",
+                        Math.toDegrees(robot.getIntakeRotateAngle()),
+                        Math.toDegrees(robot.getDeliveryRotateAngle()));
+
+                multipleTelemetry.addData("heights", "intake height: %f, delivery height: %f",
+                        Math.toDegrees(robot.getIntakeSlidePositionInches()),
+                        Math.toDegrees(robot.getDeliverySlidePositionInches()));
 
                 multipleTelemetry.addData("color sensor", "H: %d, S: %d, V: %d, dist: %f",
                         (int) hsv.h, (int) hsv.s, (int) hsv.v, robot.getConeDistanceInch());

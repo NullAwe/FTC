@@ -15,8 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
 import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
-import org.firstinspires.ftc.teamcode.task.IntakeSlideTask;
 import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
+import org.firstinspires.ftc.teamcode.task.IntakeSlideTask;
 import org.firstinspires.ftc.teamcode.task.Task;
 import org.firstinspires.ftc.teamcode.util.objectdetector.CameraFrameSource;
 import org.firstinspires.ftc.teamcode.util.objectdetector.CameraWrapper;
@@ -27,20 +27,14 @@ import org.firstinspires.ftc.teamcode.util.objectdetector.SignalDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.VuforiaBasedCameraSource;
 
 public abstract class HDWorldRobotBase extends HDRobotBase {
-    private static final String TAG = HDRobotBase.class.getSimpleName();
-
     // Constant for intake rotate actions
     protected final static double INTAKE_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(270.0);
+    private static final String TAG = HDRobotBase.class.getSimpleName();
     // Constant for intake lift actions
     private final static double INTAKE_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
     private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 4.46;
     protected final static double INTAKE_SLIDE_TICKS_PER_INCH =
             INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
-
-    // Cached Encoder values.
-    private int   intakeSlidePos = 0, deliverySlidePos = 0; // Encoder Values
-    private double intakeSlideVel = 0.0, deliverySlideVel = 0.0; // Velocities
-
     private final Servo intakeClaw;
     private final Servo intakeRotate;
     private final Servo deliveryRotate;
@@ -49,6 +43,9 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private final RevColorSensorV3 clawColorSensor;
     private final WebcamName signalWebcam;
     private final WebcamName coneWebcam;
+    // Cached Encoder values.
+    private int intakeSlidePos = 0, deliverySlidePos = 0; // Encoder Values
+    private double intakeSlideVel = 0.0, deliverySlideVel = 0.0; // Velocities
     private boolean isClawOpen = true;
     private ConeDetector coneDetector = null;
     private CameraWrapper cameraWrapper;
@@ -58,7 +55,6 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public HDWorldRobotBase(RobotInitParameters initParameters) {
         super(initParameters);
 
-        HardwareMap hardwareMap = initParameters.hardwareMap;
         deliverySlide = hardwareMap.get(DcMotorEx.class, "deliverySlide");
         intakeSlide = hardwareMap.get(DcMotorEx.class, "intakeSlide");
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
@@ -106,6 +102,8 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
         intakeSlideVel = intakeSlide.getVelocity();
         deliverySlideVel = deliverySlide.getVelocity();
+        telemetry.addData("Cycle time: ", (int) globalTimer.milliseconds());
+        globalTimer.reset();
     }
 
     public VuforiaLocalizer getVuforia() {
@@ -225,13 +223,15 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         return new IntakeRotateTask(this, 0.0, AngleType.DEGREE);
     }
 
-    public void setIntakeRotateAngle(double angleRadian) {
-        intakeRotate.setPosition(
-                Math.min(Math.max(angleRadian * getIntakeRotateTicksPerRadian() + getIntakeRotateZeroAnglePos(), 0.0), 1.0));
+    public double getIntakeRotateAngle() {
+        return (intakeRotate.getPosition() - getIntakeRotateZeroAnglePos()) /
+                getIntakeRotateTicksPerRadian();
     }
 
-    public double getIntakeRotateAngle() {
-        return (intakeRotate.getPosition() - getIntakeRotateZeroAnglePos()) / getIntakeRotateTicksPerRadian();
+    public void setIntakeRotateAngle(double angleRadian) {
+        intakeRotate.setPosition(
+                Math.min(Math.max(angleRadian * getIntakeRotateTicksPerRadian() +
+                        getIntakeRotateZeroAnglePos(), 0.0), 1.0));
     }
 
     public abstract double getIntakeRotateZeroAnglePos();
@@ -257,13 +257,23 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliverySlide.setPower(power);
     }
 
+    public double getDeliveryRotateAngle() {
+        return (deliveryRotate.getPosition() - getDeliveryRotateZeroAnglePos()) /
+                getDeliveryRotateTicksPerRadian();
+    }
+
+    public void setDeliveryRotateAngle(double angleRadian) {
+        deliveryRotate.setPosition(
+                angleRadian * getDeliveryRotateTicksPerRadian() + getDeliveryRotateZeroAnglePos());
+    }
+
     public abstract double getDeliverySlideTicksPerInch();
+
+    // End: utils for delivery slide actions
 
     public double getDeliverySlidePositionInches() {
         return deliverySlidePos / getDeliverySlideTicksPerInch();
     }
-
-    // End: utils for delivery slide actions
 
     // Begin: utils for delivery rotate actions
     public Task getDeliveryRotateDeliveryTask() {
@@ -272,11 +282,6 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public Task getDeliveryRotateResetTask() {
         return new DeliveryRotateTask(this, 0.0, AngleType.DEGREE);
-    }
-
-    public void setDeliveryRotateAngle(double angleRadian) {
-        deliveryRotate.setPosition(
-                angleRadian * getDeliveryRotateTicksPerRadian() + getDeliveryRotateZeroAnglePos());
     }
 
     public abstract double getDeliveryRotateZeroAnglePos();

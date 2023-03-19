@@ -66,7 +66,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
         roadRunnerParameters = drive.getRoadRunnerParameters();
 
         if (!roadRunnerParameters.runUsingEncoder) {

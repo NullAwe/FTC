@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerParameters;
@@ -62,7 +63,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
-        robot = createRobot(hardwareMap);
+        robot = createRobot(hardwareMap, telemetry);
 
         robot.setIntakeRotateAngle(0.0);
         robot.openClaw();
@@ -276,7 +277,7 @@ public abstract class TeleOpBase extends LinearOpMode {
         return getDeliveryHeightHigh();
     }
 
-    protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap);
+    protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry);
 
     protected abstract double getIntakeDeliveryHeightInch();
 

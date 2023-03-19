@@ -38,7 +38,7 @@ public class MaxVelocityTuner extends LinearOpMode {
         ElapsedTime timer;
         VoltageSensor batteryVoltageSensor;
 
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
         roadRunnerParameters = drive.getRoadRunnerParameters();
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

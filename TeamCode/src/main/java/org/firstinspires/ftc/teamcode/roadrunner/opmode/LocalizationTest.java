@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.drive.HDRobotBase;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

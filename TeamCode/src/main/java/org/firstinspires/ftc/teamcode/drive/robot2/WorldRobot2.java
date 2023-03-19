@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.FeedforwardParams;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
@@ -100,8 +101,8 @@ public class WorldRobot2 extends HDWorldRobotBase {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    public WorldRobot2(HardwareMap hardwareMap) {
-        super(new RobotInitParameters(hardwareMap, createRoadRunnerParameters()));
+    public WorldRobot2(HardwareMap hardwareMap, Telemetry telemetry) {
+        super(new RobotInitParameters(hardwareMap, telemetry, createRoadRunnerParameters()));
 
         // Dummy code to make sure this is indeed robot 1
         Servo nonExistServo = hardwareMap.get(Servo.class, "for_robot_2_only");

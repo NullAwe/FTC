@@ -58,7 +58,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        drive = createRobot(hardwareMap);
+        drive = createRobot(hardwareMap, telemetry);
         roadRunnerParameters = drive.getRoadRunnerParameters();
         if (roadRunnerParameters.runUsingEncoder) {
             RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +

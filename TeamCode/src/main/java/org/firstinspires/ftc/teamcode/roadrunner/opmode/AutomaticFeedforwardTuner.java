@@ -40,7 +40,7 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
         RoadRunnerParameters roadRunnerParameters = drive.getRoadRunnerParameters();
         if (roadRunnerParameters.runUsingEncoder) {
             RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +

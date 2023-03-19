@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.HDRobotBase;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        HDRobotBase drive = createRobot(hardwareMap);
+        HDRobotBase drive = createRobot(hardwareMap, telemetry);
 
         waitForStart();
 
