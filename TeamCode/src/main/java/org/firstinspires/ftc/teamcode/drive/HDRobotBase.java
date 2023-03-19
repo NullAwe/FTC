@@ -47,7 +47,7 @@ public abstract class HDRobotBase extends MecanumDrive {
     protected static final String VUFORIA_KEY =
             "AXmxi+b/////AAABmazWyYO7aUlrjrYb3f16ZIMIutEjCylZIDW82luhoGYwENOMgUOxnJmdyIe3jatwyBUoTkRfL8nbIjWeN36jIM8CYSVWLxFlsGiLUe8oTmt4Pi6qn82nAJEXIZsGbAH27NP0Rc2XID0DO1qx6e8c0ahBUzgrZrhF6On0rR7dSZLStNnEENzzWX4qPsawW7IWROP8s7SAvdUgXrXe5cX+/e60NPg6mEw61SfPS/3UP3y3mz7DBfhJRC/H26rL2iZg7aosUIJkSf1gjyp9hRbvznfQX/zDrB3tXexJ2KBUTrHEzDnamVk7SMXq7ltiZyoDiaB6qL6BGgpvuQ9X6Oh3Ahmzch93IZSANif6KxvclNXg";
     private static final String TAG = HDRobotBase.class.getSimpleName();
-    public static int ACTIVE_ROBOT = 2;
+    public static int ACTIVE_ROBOT = 1;
     private final RoadRunnerParameters roadRunnerParameters;
     private final TrajectorySequenceRunner trajectorySequenceRunner;
     private final TrajectoryVelocityConstraint velConstraint;

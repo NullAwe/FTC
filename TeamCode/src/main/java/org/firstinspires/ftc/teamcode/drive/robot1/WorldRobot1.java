@@ -153,7 +153,12 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getIntakeRotateZeroAnglePos() {
-        return 0.41;
+        return 0.86;
+    }
+
+    @Override
+    public double getIntakeSlideTicksPerInch() {
+        return -INTAKE_SLIDE_TICKS_PER_INCH;
     }
 
     @Override
@@ -169,12 +174,12 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getDeliverySlideTicksPerInch() {
-        return -DELIVERY_SLIDE_TICKS_PER_INCH;
+        return DELIVERY_SLIDE_TICKS_PER_INCH;
     }
 
     @Override
     public double getDeliveryRotateZeroAnglePos() {
-        return 0.37;
+        return 0.55;
     }
 
     // Constant for delivery rotate actions

@@ -34,7 +34,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     // Constant for intake lift actions
     private final static double INTAKE_SLIDE_TICKS_PER_REVOLUTION = 145.1; // 1150rpm
     private final static double INTAKE_SLIDE_INCH_PER_REVOLUTION = 4.46;
-    private final static double INTAKE_SLIDE_TICKS_PER_INCH =
+    protected final static double INTAKE_SLIDE_TICKS_PER_INCH =
             INTAKE_SLIDE_TICKS_PER_REVOLUTION / INTAKE_SLIDE_INCH_PER_REVOLUTION;
 
     // Cached Encoder values.
@@ -201,7 +201,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public void setIntakeSlideHeight(double height) {
-        intakeSlide.setTargetPosition((int) (height * INTAKE_SLIDE_TICKS_PER_INCH));
+        intakeSlide.setTargetPosition((int) (height * getIntakeSlideTicksPerInch()));
         intakeSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -209,9 +209,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         intakeSlide.setPower(power);
     }
 
-    public double getIntakeSlideTicksPerInch() {
-        return INTAKE_SLIDE_TICKS_PER_INCH;
-    }
+    public abstract double getIntakeSlideTicksPerInch();
 
     public double getIntakeSlidePositionInches() {
         return intakeSlidePos / getIntakeSlideTicksPerInch();

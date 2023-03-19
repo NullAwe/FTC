@@ -159,6 +159,11 @@ public class WorldRobot2 extends HDWorldRobotBase {
     }
 
     @Override
+    public double getIntakeSlideTicksPerInch() {
+        return INTAKE_SLIDE_TICKS_PER_INCH;
+    }
+
+    @Override
     public double getIntakeRotateTicksPerRadian() {
         return INTAKE_ROTATE_TICKS_PER_RADIAN;
     }
