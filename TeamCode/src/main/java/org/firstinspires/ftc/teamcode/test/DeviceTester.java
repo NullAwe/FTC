@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.drive.RobotFactory.createRobot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -96,7 +95,6 @@ public class DeviceTester extends LinearOpMode {
             driveMotorPowers.put(field.getName(), motor);
             motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            motor.setPower(0.4);
         }
 
         waitForStart();
@@ -163,8 +161,10 @@ public class DeviceTester extends LinearOpMode {
                         Boolean.toString(robot.isBlueCone()),
                         Boolean.toString(robot.isRedCone()),
                         Boolean.toString(robot.isPole()));
-                multipleTelemetry.addData("IMU ori", "Heading: %f, xAV: %f, yAV: %f, zAV: %f",
+                multipleTelemetry.addData("IMU ori",
+                        "Heading: %f, hV: %f, xAV: %f, yAV: %f, zAV: %f",
                         robot.getExternalHeading(),
+                        robot.getExternalHeadingVelocity(),
                         robot.getImu().getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate,
                         robot.getImu().getRobotAngularVelocity(AngleUnit.RADIANS).yRotationRate,
                         robot.getImu().getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate);

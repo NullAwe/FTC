@@ -26,7 +26,9 @@ public class WorldRobot2 extends HDWorldRobotBase {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10, 13.9);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+            RoadRunnerParameters.getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+//    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10, 13.9);
     //    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
 //            32767 / (MAX_RPM / 60 * TICKS_PER_REV));
     /*
@@ -39,7 +41,8 @@ public class WorldRobot2 extends HDWorldRobotBase {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.2; // in
+    public static double TRACK_WIDTH = 13.5; // in
+//    public static double TRACK_WIDTH = 14.2; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -47,9 +50,9 @@ public class WorldRobot2 extends HDWorldRobotBase {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-//    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(
-//            1 / (MAX_RPM * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0), 0.0, 0.0);
-    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(0.0135, 0.004, 0.0);
+    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(
+            1 / (MAX_RPM * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0), 0.0, 0.0);
+//    public static FeedforwardParams FEEDFORWARD_PRAMS = new FeedforwardParams(0.0135, 0.004, 0.0);
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -90,13 +93,16 @@ public class WorldRobot2 extends HDWorldRobotBase {
      BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
      */
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 0.4);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0.0);
-    public static double LATERAL_MULTIPLIER = 1.5;
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 0.4);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0.0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0.0);
+    public static double LATERAL_MULTIPLIER = 1;
+//    public static double LATERAL_MULTIPLIER = 1.5;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
@@ -141,7 +147,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
         // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     @Override

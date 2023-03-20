@@ -26,7 +26,9 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10, 13.9);
+//    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+//            RoadRunnerParameters.getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(12, 0, 10, 13.24);
     /*
      * These are physical constants that can be determined from your robot (including the track
      * width; it will be tune empirically later although a rough estimate is important). Users are
@@ -36,8 +38,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 1.03; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 11.6; // in
+    public static double GEAR_RATIO = 1.05; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 16.2; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -56,10 +58,10 @@ public class WorldRobot1 extends HDWorldRobotBase {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 72;
-    public static double MAX_ACCEL = 72;
-    public static double MAX_ANG_VEL = 5.9; //Math.toRadians(262.03258124999996);
-    public static double MAX_ANG_ACCEL = 5.9;
+    public static double MAX_VEL = 64;
+    public static double MAX_ACCEL = 64;
+    public static double MAX_ANG_VEL = 2.04; //Math.toRadians(262.03258124999996);
+    public static double MAX_ANG_ACCEL = 2.04;
 
     /*
      Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
@@ -88,13 +90,13 @@ public class WorldRobot1 extends HDWorldRobotBase {
      BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
      */
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 0.1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0.0);
-    public static double LATERAL_MULTIPLIER = 1.184;
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0.1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0.0);
+    public static double LATERAL_MULTIPLIER = 1.17;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
@@ -139,7 +141,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
         // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     @Override
