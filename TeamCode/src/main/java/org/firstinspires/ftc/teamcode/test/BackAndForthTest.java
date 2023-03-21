@@ -20,7 +20,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(group = "test")
 public class BackAndForthTest extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+    public static double DISTANCE = 26; // in
+    public static double L_DISTANCE = 52; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,6 +37,7 @@ public class BackAndForthTest extends LinearOpMode {
 
         timer.reset();
         TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(L_DISTANCE)
                 .forward(DISTANCE)
                 .back(DISTANCE)
                 .forward(DISTANCE)

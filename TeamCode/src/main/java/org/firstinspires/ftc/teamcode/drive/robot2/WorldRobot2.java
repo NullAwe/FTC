@@ -26,8 +26,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            RoadRunnerParameters.getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 0, 15, 13.05);
 //    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10, 13.9);
     //    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
 //            32767 / (MAX_RPM / 60 * TICKS_PER_REV));
@@ -40,9 +39,8 @@ public class WorldRobot2 extends HDWorldRobotBase {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.5; // in
-//    public static double TRACK_WIDTH = 14.2; // in
+    public static double GEAR_RATIO = 1.055; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 16.28; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -63,8 +61,8 @@ public class WorldRobot2 extends HDWorldRobotBase {
      */
     public static double MAX_VEL = 65;
     public static double MAX_ACCEL = 65;
-    public static double MAX_ANG_VEL = 5.46; //Math.toRadians(262.03258124999996);
-    public static double MAX_ANG_ACCEL = 5.46;
+    public static double MAX_ANG_VEL = 2.5; //Math.toRadians(262.03258124999996);
+    public static double MAX_ANG_ACCEL = 2.5;
 
     /*
      Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
@@ -99,10 +97,9 @@ public class WorldRobot2 extends HDWorldRobotBase {
 
 //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 0.4);
 //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0.0);
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0.0);
-    public static double LATERAL_MULTIPLIER = 1;
-//    public static double LATERAL_MULTIPLIER = 1.5;
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0.2);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0.0);
+    public static double LATERAL_MULTIPLIER = 1.188;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
