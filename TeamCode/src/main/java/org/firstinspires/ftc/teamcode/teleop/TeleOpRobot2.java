@@ -12,33 +12,8 @@ import org.firstinspires.ftc.teamcode.drive.robot2.WorldRobot2;
 @Config
 @TeleOp(name="Tele-Op - Robot 2", group="competition")
 public class TeleOpRobot2 extends TeleOpBase {
-    public static double INTAKE_HEIGHT_INCHES = 19;
-    public static double INTAKE_ROTATE_DROP_DEGREE = -96;
-    public static double DELIVERY_HEIGHT_HIGH = 22;
-    public static double DELIVERY_HEIGHT_MID = 10;
-
     @Override
     protected HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry) {
         return new WorldRobot2(hardwareMap, telemetry);
-    }
-
-    @Override
-    protected double getIntakeDeliveryHeightInch() {
-        return INTAKE_HEIGHT_INCHES;
-    }
-
-    @Override
-    protected double getIntakeDeliveryRotateDegree() {
-        return INTAKE_ROTATE_DROP_DEGREE;
-    }
-
-    @Override
-    protected double getDeliveryHeightHigh() {
-        return DELIVERY_HEIGHT_HIGH;
-    }
-
-    @Override
-    protected double getDeliveryHeightMedium() {
-        return DELIVERY_HEIGHT_MID;
     }
 }

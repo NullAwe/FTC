@@ -101,6 +101,13 @@ public class WorldRobot1 extends HDWorldRobotBase {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
+    // Auto & Tele-op parameters
+    public static double INTAKE_HEIGHT_INCHES = 17.8;
+    public static double INTAKE_ROTATE_DROP_DEGREE = -98;
+    public static double DELIVERY_HEIGHT_HIGH = 26.5;
+    public static double DELIVERY_HEIGHT_MID = 14;
+    public static double DELIVERY_ROTATE_ANGLE_DEGREE = 60;
+
     public WorldRobot1(HardwareMap hardwareMap, Telemetry telemetry) {
         super(new RobotInitParameters(hardwareMap, telemetry, createRoadRunnerParameters()));
 
@@ -191,5 +198,30 @@ public class WorldRobot1 extends HDWorldRobotBase {
     @Override
     public double getDeliveryRotateTicksPerRadian() {
         return DELIVERY_ROTATE_TICKS_PER_RADIAN;
+    }
+
+    @Override
+    public double getIntakeDeliveryHeightInch() {
+        return INTAKE_HEIGHT_INCHES;
+    }
+
+    @Override
+    public double getIntakeDeliveryRotateDegree() {
+        return INTAKE_ROTATE_DROP_DEGREE;
+    }
+
+    @Override
+    public double getDeliveryHeightHigh() {
+        return DELIVERY_HEIGHT_HIGH;
+    }
+
+    @Override
+    public double getDeliveryHeightMedium() {
+        return DELIVERY_HEIGHT_MID;
+    }
+
+    @Override
+    public double getAutoDeliveryRotateAngleDegree() {
+        return DELIVERY_ROTATE_ANGLE_DEGREE;
     }
 }

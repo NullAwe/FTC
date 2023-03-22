@@ -123,14 +123,14 @@ public abstract class TeleOpBase extends LinearOpMode {
                     presetTask = new ParallelTask(
                             new SeriesTask(
                                     new SleepTask(DELIVERY_DELAY_MILLIS),
-                                    new DeliverySlideTask(robot, getDeliveryHeightHigh(),
+                                    new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(),
                                             DELIVERY_POWER)),
                             getResetIntakeTask());
                 } else if (gp2.onceLeftBumper()) {
                     presetTask = new ParallelTask(
                             new SeriesTask(
                                     new SleepTask(DELIVERY_DELAY_MILLIS),
-                                    new DeliverySlideTask(robot, getDeliveryHeightMedium(),
+                                    new DeliverySlideTask(robot, robot.getDeliveryHeightMedium(),
                                             DELIVERY_POWER)),
                             getResetIntakeTask());
                 } else if (Math.abs(gp2.leftStickY()) > 0.1) {
@@ -178,10 +178,11 @@ public abstract class TeleOpBase extends LinearOpMode {
 
     private Task getPickUpConeTask() {
         return new ParallelTask(
-                new IntakeSlideTask(robot, getIntakeDeliveryHeightInch(), INTAKE_SLIDER_POWER),
+                new IntakeSlideTask(robot, robot.getIntakeDeliveryHeightInch(),
+                        INTAKE_SLIDER_POWER),
                 new SeriesTask(
                         new SleepTask(INTAKE_ROTATE_DELAY_MILLIS),
-                        new IntakeRotateTask(robot, getIntakeDeliveryRotateDegree(),
+                        new IntakeRotateTask(robot, robot.getIntakeDeliveryRotateDegree(),
                                 AngleType.DEGREE)));
     }
 
@@ -270,20 +271,12 @@ public abstract class TeleOpBase extends LinearOpMode {
     }
 
     private double getIntakeHeightMax() {
-        return getIntakeDeliveryHeightInch();
+        return robot.getIntakeDeliveryHeightInch();
     }
 
     private double getDeliveryHeightMax() {
-        return getDeliveryHeightHigh();
+        return robot.getDeliveryHeightHigh();
     }
 
     protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry);
-
-    protected abstract double getIntakeDeliveryHeightInch();
-
-    protected abstract double getIntakeDeliveryRotateDegree();
-
-    protected abstract double getDeliveryHeightHigh();
-
-    protected abstract double getDeliveryHeightMedium();
 }

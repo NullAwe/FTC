@@ -288,4 +288,11 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public abstract double getDeliveryRotateTicksPerRadian();
     // End: utils for delivery rotate actions
+
+    // Auto or Tele-op parameters
+    public abstract double getIntakeDeliveryHeightInch();
+    public abstract double getIntakeDeliveryRotateDegree();
+    public abstract double getDeliveryHeightHigh();
+    public abstract double getDeliveryHeightMedium();
+    public abstract double getAutoDeliveryRotateAngleDegree();
 }

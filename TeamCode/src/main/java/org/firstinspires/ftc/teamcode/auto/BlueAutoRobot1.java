@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,8 +9,17 @@ import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
 @Config
-@TeleOp(name="Tele-Op - Robot 1", group="competition")
-public class TeleOpRobot1 extends TeleOpBase {
+@Autonomous(name="Auto - Robot 1 - Blue", group="world")
+public class BlueAutoRobot1 extends AutoBase {
+    @Override
+    protected boolean isBlueCorner() {
+        return true;
+    }
+
+    @Override
+    protected String getTeleOpName() {
+        return "Tele-Op - Robot 1";
+    }
 
     @Override
     protected HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry) {
