@@ -39,11 +39,11 @@ public abstract class AutoBase extends LinearOpMode {
 
     public static int WAIT_PRIOR_RETRACT_MILLIS = 140;
     public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
-    public static int DELAY_AFTER_PICKUP_MILLIS = 100;
+    public static int DELAY_AFTER_PICKUP_MILLIS = 5;
     public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 500;
-    public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 400;
-    public static int DURATION_INTAKE_SLIDE_DROP1_MILLIS = 300;
-    public static int DURATION_INTAKE_SLIDE_DROP2_MILLIS = 250;
+    public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 500;
+    public static int DURATION_INTAKE_SLIDE_DROP1_MILLIS = 350;
+    public static int DURATION_INTAKE_SLIDE_DROP2_MILLIS = 300;
     public static int DURATION_DELIVERY_SLIDE_MILLIS = 800;
     public static double POWER_RETRACT = 0.8;
     public static double POWER_DELIVERY = 1.0;
