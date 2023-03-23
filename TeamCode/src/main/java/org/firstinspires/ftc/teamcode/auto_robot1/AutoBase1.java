@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto_robot1;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -27,24 +27,34 @@ import org.firstinspires.ftc.teamcode.task.Task;
 import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
-public abstract class AutoBaseRobot2 extends LinearOpMode {
+public abstract class AutoBase1 extends LinearOpMode {
     public static int AA_NUM_CYCLES = 5;
     public static int AA_TOTAL_TIME_MILLIS = 30000;
     public static double DIST_DRIVE_START = 52;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
+    // The offset distance when driving backward compared to driving forward to compensate the robot
+    // driving characteristic difference between forward and backward
+    public static double DIST_DRIVE_BACK_OFFSET = -0.5;
     public static double DIST_INTAKE_SLIDE_STEP = 1.25;
-    public static double DIST_INTAKE_DELIVERY_DROP1 = 2;
-    public static double DIST_INTAKE_DELIVERY_DROP2 = 2;
+    // The intake slide drop distance before dropping the cone (for the initial start run)
+    public static double DIST_INTAKE_DELIVERY_DROP_START = 3;
+    // The intake slide drop distance before dropping the cone (for the 5-cycle run)
+    public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 3;
 
+    // Pause time before retracing the delivery slide.
     public static int WAIT_PRIOR_RETRACT_MILLIS = 140;
-    public static int DELAY_PRIOR_DELIVERY_MILLIS = 300;
-    public static int DELAY_AFTER_PICKUP_MILLIS = 100;
-    public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 400;
+    public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
+    public static int DELAY_AFTER_PICKUP_MILLIS = 5;
+    // Total time needed for moving the intake slide up to the highest position.
+    public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 500;
+    // Total time needed for moving the intake slide down to the ready position.
     public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 500;
-    public static int DURATION_INTAKE_SLIDE_DROP1_MILLIS = 350;
-    public static int DURATION_INTAKE_SLIDE_DROP2_MILLIS = 350;
-    public static int DURATION_DELIVERY_SLIDE_MILLIS = 800;
+    // Total time needed for moving the intake slide down to ready to drop cone position.
+    public static int DURATION_INTAKE_SLIDE_DROP_START_MILLIS = 350;
+    // Total time needed for moving the intake slide down to ready to drop cone position.
+    public static int DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS = 300;
+
     public static double POWER_RETRACT = 0.8;
     public static double POWER_DELIVERY = 1.0;
     public static double POWER_INTAKE_UP = 1.0;
@@ -115,13 +125,14 @@ public abstract class AutoBaseRobot2 extends LinearOpMode {
                         new IntakeRotateTask(robot, robot.getIntakeDeliveryRotateDegree(),
                                 AngleType.DEGREE),
                         new IntakeSlideTask(robot,
-                                robot.getIntakeDeliveryHeightInch() - DIST_INTAKE_DELIVERY_DROP1,
+                                robot.getIntakeDeliveryHeightInch() -
+                                        DIST_INTAKE_DELIVERY_DROP_START,
                                 1.0,
-                                DURATION_INTAKE_SLIDE_DROP1_MILLIS),
+                                DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
                         new IntakeClawTask(robot, true),
                         new IntakeSlideTask(robot,
                                 robot.getIntakeDeliveryHeightInch(), 1.0,
-                                DURATION_INTAKE_SLIDE_DROP1_MILLIS),
+                                DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
                         getDeliveryTask()
                 ),
                 new DrivingTask(robot, currSeq)
@@ -173,7 +184,7 @@ public abstract class AutoBaseRobot2 extends LinearOpMode {
         forwardSeq.forward(DIST_DRIVE_PICKUP);
         prevSeq = forwardSeq.build();
         TrajectorySequenceBuilder backSeq = robot.trajectorySequenceBuilder(prevSeq.end());
-        backSeq.back(DIST_DRIVE_PICKUP - 0.5);
+        backSeq.back(DIST_DRIVE_PICKUP + DIST_DRIVE_BACK_OFFSET);
         currSeq = backSeq.build();
 
         return new ParallelTask(
@@ -198,12 +209,12 @@ public abstract class AutoBaseRobot2 extends LinearOpMode {
                                                 AngleType.DEGREE),
                                         new IntakeSlideTask(robot,
                                                 robot.getIntakeDeliveryHeightInch() -
-                                                        DIST_INTAKE_DELIVERY_DROP2, 1.0,
-                                                DURATION_INTAKE_SLIDE_DROP2_MILLIS),
+                                                        DIST_INTAKE_DELIVERY_DROP_CYCLE, 1.0,
+                                                DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                         new IntakeClawTask(robot, true),
                                         new IntakeSlideTask(robot,
                                                 robot.getIntakeDeliveryHeightInch(), 1.0,
-                                                DURATION_INTAKE_SLIDE_DROP2_MILLIS),
+                                                DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                         getDeliveryTask()),
                                 new SeriesTask(
                                         new SleepTask(DELAY_AFTER_PICKUP_MILLIS),

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto_robot2;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -27,24 +27,39 @@ import org.firstinspires.ftc.teamcode.task.Task;
 import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
-public abstract class AutoBase extends LinearOpMode {
+public abstract class AutoBase2 extends LinearOpMode {
     public static int AA_NUM_CYCLES = 5;
     public static int AA_TOTAL_TIME_MILLIS = 30000;
     public static double DIST_DRIVE_START = 52;
     public static double DIST_DRIVE_END = 23.5;
-    public static double DIST_DRIVE_PICKUP = 26;
+    public static double DIST_DRIVE_PICKUP = 25.5;
+    // The offset distance when driving backward compared to driving forward to compensate the robot
+    // driving characteristic difference between forward and backward
+    public static double DIST_DRIVE_BACK_OFFSET = -0.4;
     public static double DIST_INTAKE_SLIDE_STEP = 1.25;
-    public static double DIST_INTAKE_DELIVERY_DROP1 = 3;
-    public static double DIST_INTAKE_DELIVERY_DROP2 = 3;
+    // The intake slide drop distance before dropping the cone (for the initial start run)
+    public static double DIST_INTAKE_DELIVERY_DROP_START = 2;
+    // The intake slide drop distance before dropping the cone (for the 5-cycle run)
+    public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 2;
 
-    public static int WAIT_PRIOR_RETRACT_MILLIS = 140;
-    public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
-    public static int DELAY_AFTER_PICKUP_MILLIS = 5;
-    public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 500;
+    // Pause time before retracing the delivery slide.
+    public static int WAIT_PRIOR_RETRACT_MILLIS = 120;
+    public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 5;
+    public static int DELAY_PRIOR_DELIVERY_MILLIS = 150;
+    public static int DELAY_INTAKE_ROTATE_MILLIS = 60;
+    public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 50;
+
+    // Total time needed for moving the intake slide up to the highest position.
+    public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 400;
+    // Total time needed for moving the intake slide down to the ready position.
     public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 500;
-    public static int DURATION_INTAKE_SLIDE_DROP1_MILLIS = 350;
-    public static int DURATION_INTAKE_SLIDE_DROP2_MILLIS = 300;
-    public static int DURATION_DELIVERY_SLIDE_MILLIS = 800;
+    // Total time needed for moving the intake slide down to ready to drop cone position (for start
+    // run).
+    public static int DURATION_INTAKE_SLIDE_DROP_START_MILLIS = 300;
+    // Total time needed for moving the intake slide down to ready to drop cone position (for
+    // 5-cycLe runs).
+    public static int DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS = 350;
+
     public static double POWER_RETRACT = 0.8;
     public static double POWER_DELIVERY = 1.0;
     public static double POWER_INTAKE_UP = 1.0;
@@ -52,7 +67,7 @@ public abstract class AutoBase extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
     protected HDWorldRobotBase robot;
     private AutoState state = AutoState.INIT;
-    private int parkingZone = 2; // 1, 2, 3
+    public static int parkingZone = 3; // 1, 2, 3
     private int cycleNumber = 0;
     private TrajectorySequence prevSeq;
     private TrajectorySequence currSeq;
@@ -110,18 +125,32 @@ public abstract class AutoBase extends LinearOpMode {
                         new DeliveryRotateTask(robot,
                                 robot.getAutoDeliveryRotateAngleDegree() * getSign(),
                                 AngleType.DEGREE),
-                        new IntakeSlideTask(robot, robot.getIntakeDeliveryHeightInch(),
-                                POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
-                        new IntakeRotateTask(robot, robot.getIntakeDeliveryRotateDegree(),
-                                AngleType.DEGREE),
-                        new IntakeSlideTask(robot,
-                                robot.getIntakeDeliveryHeightInch() - DIST_INTAKE_DELIVERY_DROP1,
-                                1.0,
-                                DURATION_INTAKE_SLIDE_DROP1_MILLIS),
-                        new IntakeClawTask(robot, true),
+                        new ParallelTask(
+                                new IntakeSlideTask(robot, robot.getIntakeDeliveryHeightInch(),
+                                        POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
+                                new SeriesTask(
+                                        new SleepTask(DELAY_INTAKE_ROTATE_MILLIS +
+                                                DELAY_INTAKE_ROTATE_STEP_MILLIS * 4),
+                                        new IntakeRotateTask(robot,
+                                                robot.getIntakeDeliveryRotateDegree(),
+                                                AngleType.DEGREE)
+                                )
+                        ),
+                        new ParallelTask(
+                                new IntakeSlideTask(robot,
+                                        robot.getIntakeDeliveryHeightInch() -
+                                                DIST_INTAKE_DELIVERY_DROP_START,
+                                        1.0,
+                                        DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
+                                new SeriesTask(
+                                        new SleepTask(
+                                                DURATION_INTAKE_SLIDE_DROP_START_MILLIS - 110),
+                                        new IntakeClawTask(robot, true)
+                                )
+                        ),
                         new IntakeSlideTask(robot,
                                 robot.getIntakeDeliveryHeightInch(), 1.0,
-                                DURATION_INTAKE_SLIDE_DROP1_MILLIS),
+                                DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
                         getDeliveryTask()
                 ),
                 new DrivingTask(robot, currSeq)
@@ -151,14 +180,17 @@ public abstract class AutoBase extends LinearOpMode {
         if (parkingZone != 2) {
             prevSeq = currSeq;
             TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
-            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
+            finishSeq.lineToLinearHeading(
+                    new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign(),
+                            -DIST_DRIVE_START * getSign(),
+                            Math.toRadians(-90)));
             currSeq = finishSeq.build();
             drivingTask = new DrivingTask(robot, currSeq, false);
         }
 
         return new ParallelTask(
                 new SeriesTask(
-                        new SleepTask(400),
+                        new SleepTask(300),
                         new ParallelTask(
                                 new IntakeSlideTask(robot, 0),
                                 new DeliveryRotateTask(robot, 0, AngleType.DEGREE),
@@ -173,42 +205,55 @@ public abstract class AutoBase extends LinearOpMode {
         forwardSeq.forward(DIST_DRIVE_PICKUP);
         prevSeq = forwardSeq.build();
         TrajectorySequenceBuilder backSeq = robot.trajectorySequenceBuilder(prevSeq.end());
-        backSeq.back(DIST_DRIVE_PICKUP - 0.5);
+        backSeq.back(DIST_DRIVE_PICKUP + DIST_DRIVE_BACK_OFFSET);
         currSeq = backSeq.build();
 
         return new ParallelTask(
                 new DeliverySlideTask(robot, 0, POWER_RETRACT),
                 new SeriesTask(
-                        new SleepTask(200),
+                        new SleepTask(WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS),
                         new ParallelTask(
                                 new DrivingTask(robot, prevSeq),
                                 new SeriesTask(
                                         new WaitForAnyConditionTask(
                                                 new SleepTask(1500),
                                                 new ConditionalTask(() -> robot.isCone() &&
-                                                        robot.getConeDistanceInch() < 1.0)),
+                                                        robot.getConeDistanceInch() < 1.5)),
                                         new IntakeClawTask(robot, false))),
                         new ParallelTask(
                                 new SeriesTask(
-                                        new IntakeSlideTask(robot,
-                                                robot.getIntakeDeliveryHeightInch(),
-                                                POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
-                                        new IntakeRotateTask(robot,
-                                                robot.getIntakeDeliveryRotateDegree(),
-                                                AngleType.DEGREE),
-                                        new IntakeSlideTask(robot,
-                                                robot.getIntakeDeliveryHeightInch() -
-                                                        DIST_INTAKE_DELIVERY_DROP2, 1.0,
-                                                DURATION_INTAKE_SLIDE_DROP2_MILLIS),
-                                        new IntakeClawTask(robot, true),
+                                        new ParallelTask(
+                                                new IntakeSlideTask(robot,
+                                                        robot.getIntakeDeliveryHeightInch(),
+                                                        POWER_INTAKE_UP,
+                                                        DURATION_INTAKE_SLIDE_UP_MILLIS),
+                                                new SeriesTask(
+                                                        new SleepTask(DELAY_INTAKE_ROTATE_MILLIS +
+                                                                (cycleNumber - 1) *
+                                                                        DELAY_INTAKE_ROTATE_STEP_MILLIS),
+                                                        new IntakeRotateTask(robot,
+                                                                robot.getIntakeDeliveryRotateDegree(),
+                                                                AngleType.DEGREE)
+                                                )
+                                        ),
+                                        new ParallelTask(
+                                                new IntakeSlideTask(robot,
+                                                        robot.getIntakeDeliveryHeightInch() -
+                                                                DIST_INTAKE_DELIVERY_DROP_CYCLE,
+                                                        1.0,
+                                                        DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
+                                                new SeriesTask(
+                                                        new SleepTask(
+                                                                DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS -
+                                                                        110),
+                                                        new IntakeClawTask(robot, true)
+                                                )
+                                        ),
                                         new IntakeSlideTask(robot,
                                                 robot.getIntakeDeliveryHeightInch(), 1.0,
-                                                DURATION_INTAKE_SLIDE_DROP2_MILLIS),
+                                                DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                         getDeliveryTask()),
-                                new SeriesTask(
-                                        new SleepTask(DELAY_AFTER_PICKUP_MILLIS),
-                                        new DrivingTask(robot, currSeq)
-                                )
+                                new DrivingTask(robot, currSeq)
                         )
                 )
         );
