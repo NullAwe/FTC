@@ -107,7 +107,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
     // Auto & Tele-op parameters
     public static double INTAKE_HEIGHT_INCHES = 19;
     public static double INTAKE_ROTATE_DROP_DEGREE = -96;
-    public static double DELIVERY_HEIGHT_HIGH = 22;
+    public static double DELIVERY_HEIGHT_HIGH = 22.5;
     public static double DELIVERY_HEIGHT_MID = 10;
     public static double DELIVERY_ROTATE_ANGLE_DEGREE = 60;
 
