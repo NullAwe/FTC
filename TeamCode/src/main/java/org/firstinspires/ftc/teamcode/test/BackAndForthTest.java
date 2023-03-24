@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Autonomous(group = "test")
+@Autonomous(name="Back and Forth Test", group = "test")
 public class BackAndForthTest extends LinearOpMode {
     public static double DISTANCE = 26; // in
     public static double L_DISTANCE = 52; // in

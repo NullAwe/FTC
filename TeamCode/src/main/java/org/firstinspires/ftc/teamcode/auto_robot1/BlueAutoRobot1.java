@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
 @Config
-@Autonomous(name="Auto - Robot 1 - Blue", group="world")
+@Autonomous(name="Auto - Robot 1 - Blue", group="Auto1")
 public class BlueAutoRobot1 extends AutoBase1 {
     @Override
     protected boolean isBlueCorner() {
