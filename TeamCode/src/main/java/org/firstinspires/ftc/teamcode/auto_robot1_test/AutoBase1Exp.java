@@ -38,22 +38,22 @@ public abstract class AutoBase1Exp extends LinearOpMode {
     public static double DIST_DRIVE_BACK_OFFSET = -0.5;
     public static double DIST_INTAKE_SLIDE_STEP = 1.25;
     // The intake slide drop distance before dropping the cone (for the initial start run)
-    public static double DIST_INTAKE_DELIVERY_DROP_START = 3;
+    public static double DIST_INTAKE_DELIVERY_DROP_START = 4;
     // The intake slide drop distance before dropping the cone (for the 5-cycle run)
-    public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 3;
+    public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 4;
 
     // Pause time before retracing the delivery slide.
     public static int WAIT_PRIOR_RETRACT_MILLIS = 120;
     public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 5;
     public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
-    public static int DELAY_INTAKE_ROTATE_BASE_MILLIS = 100;
-    public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 50;
+    public static int DELAY_INTAKE_ROTATE_BASE_MILLIS = 140;
+    public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 40;
     // Total time needed for moving the intake slide up to the highest position.
     public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 500;
     // Total time needed for moving the intake slide down to the ready position.
     public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 500;
     // Total time needed for moving the intake slide down to ready to drop cone position.
-    public static int DURATION_INTAKE_SLIDE_DROP_START_MILLIS = 350;
+    public static int DURATION_INTAKE_SLIDE_DROP_START_MILLIS = 300;
     // Total time needed for moving the intake slide down to ready to drop cone position.
     public static int DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS = 300;
 
@@ -127,7 +127,7 @@ public abstract class AutoBase1Exp extends LinearOpMode {
                                         POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
                                 new SeriesTask(
                                         new SleepTask(DELAY_INTAKE_ROTATE_BASE_MILLIS +
-                                                DELAY_INTAKE_ROTATE_STEP_MILLIS * 4),
+                                                DELAY_INTAKE_ROTATE_STEP_MILLIS * 5),
                                         new IntakeRotateTask(robot,
                                                 robot.getIntakeDeliveryRotateDegree(),
                                                 AngleType.DEGREE)
@@ -173,18 +173,16 @@ public abstract class AutoBase1Exp extends LinearOpMode {
 
     private Task createFinishTask() {
         state = AutoState.FINISH;
-        Task drivingTask = new SleepTask(2); // We may not need to drive.
-        if (parkingZone != 2) {
-            prevSeq = currSeq;
-            TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
+
+        prevSeq = currSeq;
+        TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
 //            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
-            finishSeq.lineToLinearHeading(
-                    new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign(),
-                            -DIST_DRIVE_START * getSign(),
-                            Math.toRadians(-90)));
-            currSeq = finishSeq.build();
-            drivingTask = new DrivingTask(robot, currSeq, false);
-        }
+        finishSeq.lineToLinearHeading(
+                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
+                        -DIST_DRIVE_START * getSign(),
+                        Math.toRadians(-90)));
+        currSeq = finishSeq.build();
+        Task drivingTask = new DrivingTask(robot, currSeq, false);
 
         return new ParallelTask(
                 new SeriesTask(

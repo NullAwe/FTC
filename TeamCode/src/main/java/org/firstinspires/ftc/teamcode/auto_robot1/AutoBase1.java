@@ -62,7 +62,7 @@ public abstract class AutoBase1 extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
     protected HDWorldRobotBase robot;
     private AutoState state = AutoState.INIT;
-    private int parkingZone = 2; // 1, 2, 3
+    public static int parkingZone = 3; // 1, 2, 3
     private int cycleNumber = 0;
     private TrajectorySequence prevSeq;
     private TrajectorySequence currSeq;
@@ -158,14 +158,16 @@ public abstract class AutoBase1 extends LinearOpMode {
 
     private Task createFinishTask() {
         state = AutoState.FINISH;
-        Task drivingTask = new SleepTask(2); // We may not need to drive.
-        if (parkingZone != 2) {
-            prevSeq = currSeq;
-            TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
-            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
-            currSeq = finishSeq.build();
-            drivingTask = new DrivingTask(robot, currSeq, false);
-        }
+
+        prevSeq = currSeq;
+        TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(prevSeq.end());
+        finishSeq.lineToLinearHeading(
+                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
+                        -DIST_DRIVE_START * getSign(),
+                        Math.toRadians(-90)));
+//            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
+        currSeq = finishSeq.build();
+        Task drivingTask = new DrivingTask(robot, currSeq, false);
 
         return new ParallelTask(
                 new SeriesTask(

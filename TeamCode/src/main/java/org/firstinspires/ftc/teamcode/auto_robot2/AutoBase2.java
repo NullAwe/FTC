@@ -46,7 +46,7 @@ public abstract class AutoBase2 extends LinearOpMode {
     public static int WAIT_PRIOR_RETRACT_MILLIS = 120;
     public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 5;
     public static int DELAY_PRIOR_DELIVERY_MILLIS = 150;
-    public static int DELAY_INTAKE_ROTATE_MILLIS = 60;
+    public static int DELAY_INTAKE_ROTATE_MILLIS = 80;
     public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 50;
 
     // Total time needed for moving the intake slide up to the highest position.
@@ -130,7 +130,7 @@ public abstract class AutoBase2 extends LinearOpMode {
                                         POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
                                 new SeriesTask(
                                         new SleepTask(DELAY_INTAKE_ROTATE_MILLIS +
-                                                DELAY_INTAKE_ROTATE_STEP_MILLIS * 4),
+                                                DELAY_INTAKE_ROTATE_STEP_MILLIS * 5),
                                         new IntakeRotateTask(robot,
                                                 robot.getIntakeDeliveryRotateDegree(),
                                                 AngleType.DEGREE)
@@ -176,17 +176,15 @@ public abstract class AutoBase2 extends LinearOpMode {
 
     private Task createFinishTask() {
         state = AutoState.FINISH;
-        Task drivingTask = new SleepTask(2); // We may not need to drive.
-        if (parkingZone != 2) {
-            prevSeq = currSeq;
-            TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
-            finishSeq.lineToLinearHeading(
-                    new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign(),
-                            -DIST_DRIVE_START * getSign(),
-                            Math.toRadians(-90)));
-            currSeq = finishSeq.build();
-            drivingTask = new DrivingTask(robot, currSeq, false);
-        }
+
+        prevSeq = currSeq;
+        TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
+        finishSeq.lineToLinearHeading(
+                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 2,
+                        -DIST_DRIVE_START * getSign(),
+                        Math.toRadians(-90)));
+        currSeq = finishSeq.build();
+        Task drivingTask = new DrivingTask(robot, currSeq, false);
 
         return new ParallelTask(
                 new SeriesTask(
