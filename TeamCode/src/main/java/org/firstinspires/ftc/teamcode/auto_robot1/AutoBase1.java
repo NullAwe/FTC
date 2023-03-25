@@ -90,8 +90,10 @@ public abstract class AutoBase1 extends LinearOpMode {
                 if (hasTimeForOneMoreCycle()) {
                     cycleNumber++;
                     task = createCycleTask();
-                } else {
+                } else if (state != AutoState.FINISH) {
                     task = createFinishTask();
+                } else {
+                    done = true;
                 }
             }
             telemetry.addData("status", "running");

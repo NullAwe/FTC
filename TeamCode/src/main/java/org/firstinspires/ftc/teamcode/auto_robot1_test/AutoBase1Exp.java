@@ -92,8 +92,10 @@ public abstract class AutoBase1Exp extends LinearOpMode {
                 if (hasTimeForOneMoreCycle()) {
                     cycleNumber++;
                     task = createCycleTask();
-                } else {
+                } else if (state != AutoState.FINISH) {
                     task = createFinishTask();
+                } else {
+                    done = true;
                 }
             }
             telemetry.addData("status", "running");
@@ -176,7 +178,6 @@ public abstract class AutoBase1Exp extends LinearOpMode {
 
         prevSeq = currSeq;
         TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
-//            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
         finishSeq.lineToLinearHeading(
                 new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
                         -DIST_DRIVE_START * getSign(),
