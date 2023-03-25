@@ -74,8 +74,6 @@ public abstract class AutoBase1Exp extends LinearOpMode {
         robot = createRobot(hardwareMap, telemetry);
         resetRobot();
 
-        currSeq = robot.trajectorySequenceBuilder(new Pose2d(0, 0))
-                .strafeRight(DIST_DRIVE_START * getSign()).build();
         Task task = createStartTask();
 
         waitForStart();
@@ -119,6 +117,8 @@ public abstract class AutoBase1Exp extends LinearOpMode {
     }
 
     private Task createStartTask() {
+        currSeq = robot.trajectorySequenceBuilder(new Pose2d(0, 0))
+                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0, Math.toRadians(90))).build();
         return new ParallelTask(
                 new SeriesTask(
                         new DeliveryRotateTask(robot,
@@ -179,9 +179,14 @@ public abstract class AutoBase1Exp extends LinearOpMode {
         prevSeq = currSeq;
         TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
         finishSeq.lineToLinearHeading(
-                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
-                        -DIST_DRIVE_START * getSign(),
-                        Math.toRadians(-90)));
+                new Pose2d(-DIST_DRIVE_START,
+                        (2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
+                        Math.toRadians(0)));
+
+//        finishSeq.lineToLinearHeading(
+//                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
+//                        -DIST_DRIVE_START * getSign(),
+//                        Math.toRadians(-90)));
         currSeq = finishSeq.build();
         Task drivingTask = new DrivingTask(robot, currSeq, false);
 
