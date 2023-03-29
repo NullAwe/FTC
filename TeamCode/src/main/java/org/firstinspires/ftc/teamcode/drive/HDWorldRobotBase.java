@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.common.AngleType;
+import org.firstinspires.ftc.teamcode.task.ConeRighterTask;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
 import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
 import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.util.objectdetector.CameraWrapper;
 import org.firstinspires.ftc.teamcode.util.objectdetector.ConeDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.CustomSignalDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.ImageProcessor;
+import org.firstinspires.ftc.teamcode.util.objectdetector.PoleDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.SignalDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.VuforiaBasedCameraSource;
 
@@ -38,17 +40,20 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private final Servo intakeClaw;
     private final Servo intakeRotate;
     private final Servo deliveryRotate;
+    private final Servo coneRighter;
     private final DcMotorEx intakeSlide;
     private final DcMotorEx deliverySlide;
     private final RevColorSensorV3 clawColorSensor;
-    private final WebcamName signalWebcam;
-    private final WebcamName coneWebcam;
+    private final WebcamName backWebcam;
+    private final WebcamName frontWebcam;
     // Cached Encoder values.
     private int intakeSlidePos = 0, deliverySlidePos = 0; // Encoder Values
     private double intakeSlideVel = 0.0, deliverySlideVel = 0.0; // Velocities
     private boolean isClawOpen = true;
+    private PoleDetector poleDetector = null;
     private ConeDetector coneDetector = null;
-    private CameraWrapper cameraWrapper;
+    private CameraFrameSource backCameraSource;
+    private CameraWrapper frontCameraSource;
     private SignalDetector signalDetector = null;
     private VuforiaLocalizer vuforia = null;
 
@@ -60,12 +65,13 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         intakeRotate = hardwareMap.get(Servo.class, "intakeRotate");
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
+        coneRighter = hardwareMap.get(Servo.class, "coneRighter");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
 
         intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        signalWebcam = null; // hardwareMap.get(WebcamName.class, "signalWebcam");
-        coneWebcam = null; // hardwareMap.get(WebcamName.class, "coneWebcam");
+        backWebcam = hardwareMap.get(WebcamName.class, "backWebcam");
+        frontWebcam = null; // hardwareMap.get(WebcamName.class, "frontWebcam");
 
         initObjectDetectorResources(hardwareMap);
     }
@@ -75,24 +81,25 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
      */
     private void initObjectDetectorResources(HardwareMap hardwareMap) {
         // Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-        if (signalWebcam != null) {
+        if (backWebcam != null) {
             VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
             parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            parameters.cameraName = signalWebcam;
+            parameters.cameraName = backWebcam;
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
             signalDetector = new CustomSignalDetector();
             signalDetector.init(hardwareMap, vuforia, 2);
+            backCameraSource = new VuforiaBasedCameraSource(vuforia, Math.toRadians(52), false);
+            poleDetector = new PoleDetector(backCameraSource);
         }
-
-        if (coneWebcam != null) {
-            cameraWrapper = new CameraWrapper(coneWebcam, 52, false);
-            if (cameraWrapper.initCamera()) {
-                coneDetector = new ConeDetector(cameraWrapper);
+        if (frontWebcam != null) {
+            frontCameraSource = new CameraWrapper(frontWebcam, Math.toRadians(52), false);
+            if (frontCameraSource.initCamera()) {
+                coneDetector = new ConeDetector(frontCameraSource);
             } else {
-                RobotLog.ee(TAG, "Failed to initialize cone camera");
+                RobotLog.ee(TAG, "Failed to initialize front camera");
             }
         } else {
-            RobotLog.ee(TAG, "Failed to initialize claw camera");
+            RobotLog.ee(TAG, "Failed to initialize front camera");
         }
     }
 
@@ -110,20 +117,24 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         return vuforia;
     }
 
+    public PoleDetector getPoleDetector() {
+        return poleDetector;
+    }
+
     public ConeDetector getConeDetector() {
         return coneDetector;
     }
 
-    public CameraFrameSource getVuforiaBasedCameraSource() {
-        return new VuforiaBasedCameraSource(vuforia, Math.toRadians(44), false);
+    public CameraFrameSource getBackCameraSource() {
+        return backCameraSource;
     }
 
-    public CameraFrameSource getCameraWrapper() {
-        return cameraWrapper;
+    public void stopFrontCameraSource() {
+        frontCameraSource.stopCamera();
     }
 
-    public void stopCameraWrapper() {
-        cameraWrapper.stopCamera();
+    public CameraFrameSource getFrontCamerSource() {
+        return frontCameraSource;
     }
 
     public int detectSignal() {
@@ -289,10 +300,40 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getDeliveryRotateTicksPerRadian();
     // End: utils for delivery rotate actions
 
+    // Begin: utils for cone righter action
+    public Task getConeRighterUpTask() {
+        return new ConeRighterTask(this, 0.0, AngleType.DEGREE);
+    }
+
+    public Task getConeRighterDownTask() {
+        return new ConeRighterTask(this, 100.0, AngleType.DEGREE);
+    }
+
+    public void upConeRighter() {
+        setConeRighterAngle(0);
+    }
+
+    public void downConeRighter() {
+        setConeRighterAngle(Math.toRadians(100));
+    }
+
+    public void setConeRighterAngle(double angleRadian) {
+        coneRighter.setPosition(
+                angleRadian * getConeRighterTicksPerRadian() + getConeRighterUpPos());
+    }
+
+    public abstract double getConeRighterUpPos();
+
+    public abstract double getConeRighterTicksPerRadian();
+    // End: utils for delivery rotate actions
+
     // Auto or Tele-op parameters
     public abstract double getIntakeDeliveryHeightInch();
     public abstract double getIntakeDeliveryRotateDegree();
     public abstract double getDeliveryHeightHigh();
     public abstract double getDeliveryHeightMedium();
+    public double getDeliveryHeightLow() {
+        return 11.5;
+    }
     public abstract double getAutoDeliveryRotateAngleDegree();
 }

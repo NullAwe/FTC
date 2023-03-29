@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.util.objectdetector.ConeDetector;
 
-@Config
 public class ConeStackAlignTask implements Task {
     private final ElapsedTime timer = new ElapsedTime();
     private final ConeDetector coneDetector;

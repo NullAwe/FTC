@@ -1,14 +1,11 @@
-package org.firstinspires.ftc.teamcode.auto_robot2;
+package org.firstinspires.ftc.teamcode.auto.auto_robot2;
 
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.auto.AutoBase;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -27,9 +24,7 @@ import org.firstinspires.ftc.teamcode.task.Task;
 import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
-public abstract class AutoBase2 extends LinearOpMode {
-    public static int AA_NUM_CYCLES = 5;
-    public static int AA_TOTAL_TIME_MILLIS = 30000;
+public abstract class AutoBase2 extends AutoBase {
     public static double DIST_DRIVE_START = 52;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 25.5;
@@ -64,64 +59,18 @@ public abstract class AutoBase2 extends LinearOpMode {
     public static double POWER_DELIVERY = 1.0;
     public static double POWER_INTAKE_UP = 1.0;
     public static double POWER_INTAKE_DOWN = 0.8;
+    public static int parkingZone = 3; // 1, 2, 3
     private final ElapsedTime timer = new ElapsedTime();
     protected HDWorldRobotBase robot;
     private AutoState state = AutoState.INIT;
-    public static int parkingZone = 3; // 1, 2, 3
     private int cycleNumber = 0;
     private TrajectorySequence prevSeq;
     private TrajectorySequence currSeq;
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        robot = createRobot(hardwareMap, telemetry);
-        resetRobot();
-
-        currSeq = robot.trajectorySequenceBuilder(new Pose2d(0, 0))
+    protected Task createStartTask() {
+        currSeq = robot.trajectorySequenceBuilder(new Pose2d())
                 .strafeRight(DIST_DRIVE_START * getSign()).build();
-        Task task = createStartTask();
-
-        waitForStart();
-
-        timer.reset();
-        boolean done = false;
-        while (opModeIsActive() && !done && task != null) {
-            robot.updateEncoderValues();
-            if (timeToFinish() && state != AutoState.FINISH) {
-                RobotLog.ee("Finish", "not enough time, quitting at %f", timer.milliseconds());
-                task.cancel();
-                task = createFinishTask();
-            } else if (task.perform()) {
-                if (hasTimeForOneMoreCycle()) {
-                    cycleNumber++;
-                    task = createCycleTask();
-                } else if (state != AutoState.FINISH) {
-                    task = createFinishTask();
-                } else {
-                    done = true;
-                }
-            }
-            telemetry.addData("status", "running");
-            telemetry.update();
-        }
-    }
-
-    private boolean timeToFinish() {
-        return timer.milliseconds() > AA_TOTAL_TIME_MILLIS - 1500;
-    }
-
-    private boolean hasTimeForOneMoreCycle() {
-        // Go ahead if there are still 6 seconds left and .
-        return cycleNumber < AA_NUM_CYCLES && timer.milliseconds() < AA_TOTAL_TIME_MILLIS - 6000;
-    }
-
-    private void resetRobot() {
-        robot.setIntakeRotateAngle(0);
-        robot.setDeliveryRotateAngle(0);
-        robot.closeClaw();
-    }
-
-    private Task createStartTask() {
         return new ParallelTask(
                 new SeriesTask(
                         new DeliveryRotateTask(robot,
@@ -159,7 +108,8 @@ public abstract class AutoBase2 extends LinearOpMode {
         );
     }
 
-    private Task getDeliveryTask() {
+    @Override
+    protected Task getDeliveryTask() {
         return new ParallelTask(
                 new SeriesTask(
                         new IntakeRotateTask(robot, 0, AngleType.DEGREE),
@@ -176,7 +126,8 @@ public abstract class AutoBase2 extends LinearOpMode {
         );
     }
 
-    private Task createFinishTask() {
+    @Override
+    protected Task createFinishTask() {
         state = AutoState.FINISH;
 
         prevSeq = currSeq;
@@ -199,7 +150,8 @@ public abstract class AutoBase2 extends LinearOpMode {
                 new DeliverySlideTask(robot, 0, POWER_RETRACT));
     }
 
-    private Task createCycleTask() {
+    @Override
+    protected Task createCycleTask() {
         state = AutoState.CYCLE;
         TrajectorySequenceBuilder forwardSeq = robot.trajectorySequenceBuilder(currSeq.end());
         forwardSeq.forward(DIST_DRIVE_PICKUP);
@@ -257,21 +209,5 @@ public abstract class AutoBase2 extends LinearOpMode {
                         )
                 )
         );
-    }
-
-    protected int getSign() {
-        return isBlueCorner() ? -1 : 1;
-    }
-
-    protected abstract boolean isBlueCorner();
-
-    protected abstract String getTeleOpName();
-
-    protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry);
-
-    enum AutoState {
-        INIT,
-        FINISH,      // Trying to finish and park
-        CYCLE,
     }
 }

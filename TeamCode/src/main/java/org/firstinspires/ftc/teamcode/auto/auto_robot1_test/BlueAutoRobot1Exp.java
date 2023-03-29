@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto_robot1;
+package org.firstinspires.ftc.teamcode.auto.auto_robot1_test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,9 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
-@Config
-@Autonomous(name="Auto - Robot 1 - Blue", group="Auto1")
-public class BlueAutoRobot1 extends AutoBase1 {
+@Autonomous(name="Auto - Robot 1 - Blue - experiment", group="Auto1Exp")
+public class BlueAutoRobot1Exp extends AutoBase1Exp {
     @Override
     protected boolean isBlueCorner() {
         return true;

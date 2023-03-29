@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
-@Config
 @TeleOp(name="Tele-Op - Robot 1", group="competition")
 public class TeleOpRobot1 extends TeleOpBase {
 

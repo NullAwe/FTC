@@ -15,9 +15,10 @@
             <goBILDA5202SeriesMotor name="rightRear" port="3" />
             <Servo name="deliveryRotate" port="1" />
             <Servo name="intakeRotate" port="3" />
+            <Servo name="coneRighter" port="4" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
-<!--    <Webcam name="armWebcam" serialNumber="F9A49060" />-->
+    <Webcam name="backWebcam" serialNumber="F9A49060" />
 <!--    <Webcam name="clawWebcam" serialNumber="0CBBA060" />-->
 </Robot>

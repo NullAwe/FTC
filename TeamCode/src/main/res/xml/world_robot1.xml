@@ -2,7 +2,7 @@
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 2" port="2">
-            <goBILDA5202SeriesMotor name="deliverySlide" port="2" />
+            <goBILDA5202SeriesMotor name="deliverySlide" port="1" />
             <goBILDA5202SeriesMotor name="intakeSlide" port="3" />
             <Servo name="intakeClaw" port="0" />
             <Servo name="for_robot_1_only" port="5" />
@@ -10,6 +10,7 @@
         <LynxModule name="Control Hub" port="173">
             <Servo name="deliveryRotate" port="1" />
             <Servo name="intakeRotate" port="0" />
+            <Servo name="coneRighter" port="4" />
             <goBILDA5202SeriesMotor name="leftRear" port="0" />
             <goBILDA5202SeriesMotor name="leftFront" port="1" />
             <goBILDA5202SeriesMotor name="rightFront" port="2" />
@@ -18,6 +19,5 @@
             <RevColorSensorV3 name="clawColorSensor" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
-<!--    <Webcam name="armWebcam" serialNumber="F9A49060" />-->
-<!--    <Webcam name="clawWebcam" serialNumber="0CBBA060" />-->
+    <Webcam name="backWebcam" serialNumber="F9A49060" />
 </Robot>

@@ -103,8 +103,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     // Auto & Tele-op parameters
     public static double INTAKE_HEIGHT_INCHES = 17.8;
-    public static double INTAKE_ROTATE_DROP_DEGREE = -98;
-    public static double DELIVERY_HEIGHT_HIGH = 24.5;
+    public static double INTAKE_ROTATE_DROP_DEGREE = -90;
+    public static double DELIVERY_HEIGHT_HIGH = 25.5;
     public static double DELIVERY_HEIGHT_MID = 14;
     public static double DELIVERY_ROTATE_ANGLE_DEGREE = 60;
 
@@ -163,7 +163,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getIntakeRotateZeroAnglePos() {
-        return 0.86;
+        return 0.85;
     }
 
     @Override
@@ -189,7 +189,7 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getDeliveryRotateZeroAnglePos() {
-        return 0.55;
+        return 0.46;
     }
 
     // Constant for delivery rotate actions
@@ -198,6 +198,19 @@ public class WorldRobot1 extends HDWorldRobotBase {
     @Override
     public double getDeliveryRotateTicksPerRadian() {
         return DELIVERY_ROTATE_TICKS_PER_RADIAN;
+    }
+
+    @Override
+    public double getConeRighterUpPos() {
+        return 0.19;
+    };
+
+    // Constant for delivery rotate actions
+    private final static double CONE_RIGHTER_TICKS_PER_RADIAN = 3 / 5 / Math.PI;
+
+    @Override
+    public double getConeRighterTicksPerRadian() {
+        return CONE_RIGHTER_TICKS_PER_RADIAN;
     }
 
     @Override

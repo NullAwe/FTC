@@ -39,6 +39,7 @@ public class DeviceTester extends LinearOpMode {
         public double intakeClaw = 0.55;
         public double intakeRotate = 0.41;
         public double deliveryRotate = 0.37;
+        public double coneRighter = 0.37;
     }
 
     public static class MotorPos {
@@ -63,12 +64,10 @@ public class DeviceTester extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = (HDWorldRobotBase) createRobot(hardwareMap, telemetry);
-        CameraDebugger armCameraDebugger = robot.getVuforiaBasedCameraSource() == null ?
-                null : new CameraDebugger(robot.getVuforiaBasedCameraSource());
-        PoleDetector wristCameraDebugger = robot.getCameraWrapper() == null ?
-                null : new PoleDetector(robot.getCameraWrapper());
-        ConeDetector coneCameraDebugger = robot.getCameraWrapper() == null ?
-                null : new ConeDetector(robot.getCameraWrapper());
+        CameraDebugger armCameraDebugger = robot.getBackCameraSource() == null ?
+                null : new CameraDebugger(robot.getBackCameraSource());
+        PoleDetector wristCameraDebugger = robot.getPoleDetector();
+        ConeDetector coneCameraDebugger = robot.getConeDetector();
         SERVO_POS.intakeClaw = robot.getClawOpenPos();
         SERVO_POS.intakeRotate = robot.getIntakeRotateZeroAnglePos();
         SERVO_POS.deliveryRotate = robot.getDeliveryRotateZeroAnglePos();
@@ -186,7 +185,7 @@ public class DeviceTester extends LinearOpMode {
         }
 
         try {
-            robot.stopCameraWrapper();
+            robot.stopFrontCameraSource();
         } catch (Exception e) {
             RobotLog.ee("Servo Tester", e, "failed to shut down camera");
         }

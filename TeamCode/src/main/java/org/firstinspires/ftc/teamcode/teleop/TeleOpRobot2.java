@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 import org.firstinspires.ftc.teamcode.drive.robot2.WorldRobot2;
 
-@Config
 @TeleOp(name="Tele-Op - Robot 2", group="competition")
 public class TeleOpRobot2 extends TeleOpBase {
     @Override

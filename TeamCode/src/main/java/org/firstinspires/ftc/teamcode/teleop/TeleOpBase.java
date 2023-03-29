@@ -68,6 +68,7 @@ public abstract class TeleOpBase extends LinearOpMode {
         robot.setIntakeRotateAngle(0.0);
         robot.openClaw();
         robot.setDeliveryRotateAngle(deliveryAngle);
+        robot.upConeRighter();
 
         gp1 = new GamePad(gamepad1);
         gp2 = new GamePad(gamepad2);
@@ -80,7 +81,11 @@ public abstract class TeleOpBase extends LinearOpMode {
             robot.updateEncoderValues();
 
             driveRobot(gp1);
-
+            if (gp1.onceA()) {
+                robot.downConeRighter();
+            } else if (gp1.onceB()) {
+                robot.upConeRighter();
+            }
             if (presetTask != null) {
                 if (gp1.onceX()) {
                     presetTask.cancel();
@@ -118,7 +123,7 @@ public abstract class TeleOpBase extends LinearOpMode {
                     robot.setIntakeRotateAngle(
                             robot.getIntakeRotateAngle() + gp2.rightStickX() / 50);
                 } else if (gp2.onceY() || gp2.rightBumper() && gp2.leftBumper()) {
-                    presetTask = new DeliverySlideTask(robot, 0, DELIVERY_POWER);
+                    presetTask = new DeliverySlideTask(robot, 0, DELIVERY_POWER - 0.3);
                 } else if (gp2.onceRightBumper()) {
                     presetTask = new ParallelTask(
                             new SeriesTask(
@@ -163,7 +168,7 @@ public abstract class TeleOpBase extends LinearOpMode {
             gp2.update();
             if (isStopRequested()) {
                 try {
-                    robot.stopCameraWrapper();
+                    robot.stopFrontCameraSource();
                     RobotLog.ee("TeleOpBase", "Shutting down the camera stream");
                 } catch (Exception e) {
                     RobotLog.ee("TeleOpBase", e, "failed to shut down camera");
