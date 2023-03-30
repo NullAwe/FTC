@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.util.objectdetector.VuforiaBasedCameraSour
 
 public abstract class HDWorldRobotBase extends HDRobotBase {
     // Constant for intake rotate actions
+    public static double CONE_RIGHTER_DOWN_ANGLE_DEGREE = 93;
     protected final static double INTAKE_ROTATE_TICKS_PER_RADIAN = 1.0 / Math.toRadians(270.0);
     private static final String TAG = HDRobotBase.class.getSimpleName();
     // Constant for intake lift actions
@@ -306,7 +307,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public Task getConeRighterDownTask() {
-        return new ConeRighterTask(this, 100.0, AngleType.DEGREE);
+        return new ConeRighterTask(this, CONE_RIGHTER_DOWN_ANGLE_DEGREE, AngleType.DEGREE);
     }
 
     public void upConeRighter() {
@@ -314,7 +315,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public void downConeRighter() {
-        setConeRighterAngle(Math.toRadians(100));
+        setConeRighterAngle(Math.toRadians(CONE_RIGHTER_DOWN_ANGLE_DEGREE));
     }
 
     public void setConeRighterAngle(double angleRadian) {

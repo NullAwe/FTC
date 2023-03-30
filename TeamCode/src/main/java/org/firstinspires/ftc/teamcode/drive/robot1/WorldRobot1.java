@@ -202,11 +202,11 @@ public class WorldRobot1 extends HDWorldRobotBase {
 
     @Override
     public double getConeRighterUpPos() {
-        return 0.19;
+        return 0.18;
     };
 
     // Constant for delivery rotate actions
-    private final static double CONE_RIGHTER_TICKS_PER_RADIAN = 3 / 5 / Math.PI;
+    private final static double CONE_RIGHTER_TICKS_PER_RADIAN = 360.0 / 270.0 / 2 / Math.PI;
 
     @Override
     public double getConeRighterTicksPerRadian() {
