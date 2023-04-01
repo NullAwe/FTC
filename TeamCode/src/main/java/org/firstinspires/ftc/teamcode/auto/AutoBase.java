@@ -88,6 +88,7 @@ public abstract class AutoBase extends LinearOpMode {
         robot.setIntakeRotateAngle(0);
         robot.setDeliveryRotateAngle(0);
         robot.closeClaw();
+        robot.initConeRighter();
     }
 
     protected abstract Task createStartTask();

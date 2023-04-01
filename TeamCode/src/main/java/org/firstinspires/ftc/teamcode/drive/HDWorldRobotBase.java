@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.task.ConeRighterTask;
@@ -51,6 +52,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private int intakeSlidePos = 0, deliverySlidePos = 0; // Encoder Values
     private double intakeSlideVel = 0.0, deliverySlideVel = 0.0; // Velocities
     private boolean isClawOpen = true;
+    private boolean isConeRighterUp = true;
     private PoleDetector poleDetector = null;
     private ConeDetector coneDetector = null;
     private CameraFrameSource backCameraSource;
@@ -302,20 +304,35 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     // End: utils for delivery rotate actions
 
     // Begin: utils for cone righter action
-    public Task getConeRighterUpTask() {
-        return new ConeRighterTask(this, 0.0, AngleType.DEGREE);
+    public boolean isConeRighterUp() {
+        return isConeRighterUp;
     }
 
-    public Task getConeRighterDownTask() {
-        return new ConeRighterTask(this, CONE_RIGHTER_DOWN_ANGLE_DEGREE, AngleType.DEGREE);
+    public void toggleConeRighter() {
+        if (isConeRighterUp()) {
+            downConeRighter();
+        } else {
+            upConeRighter();
+        }
+    }
+
+    public void initConeRighter() {
+        setConeRighterAngle(0);
+        isConeRighterUp = true;
     }
 
     public void upConeRighter() {
+        if (isConeRighterUp) return;
+
         setConeRighterAngle(0);
+        isConeRighterUp = true;
     }
 
     public void downConeRighter() {
+        if (!isConeRighterUp) return;
+
         setConeRighterAngle(Math.toRadians(CONE_RIGHTER_DOWN_ANGLE_DEGREE));
+        isConeRighterUp = false;
     }
 
     public void setConeRighterAngle(double angleRadian) {

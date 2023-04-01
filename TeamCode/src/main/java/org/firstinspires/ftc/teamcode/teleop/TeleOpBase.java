@@ -47,7 +47,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static int INTAKE_ROTATE_DELAY_MILLIS = 400;
     public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
     public static int DELIVERY_DELAY_MILLIS = 300;
-    public static double DELIVERY_ANGLE_ROTATE_RADIAN = 1.4;
+    public static double DELIVERY_ANGLE_ROTATE_RADIAN = 1.2;
     private static int INTAKE_SLIDE_HEIGHT_MIN = -1;
     private static int DELIVERY_SLIDE_HEIGHT_MIN = -1;
     protected final ElapsedTime cycleTime = new ElapsedTime();
@@ -68,7 +68,7 @@ public abstract class TeleOpBase extends LinearOpMode {
         robot.setIntakeRotateAngle(0.0);
         robot.openClaw();
         robot.setDeliveryRotateAngle(deliveryAngle);
-        robot.upConeRighter();
+        robot.initConeRighter();
 
         gp1 = new GamePad(gamepad1);
         gp2 = new GamePad(gamepad2);
@@ -82,9 +82,7 @@ public abstract class TeleOpBase extends LinearOpMode {
 
             driveRobot(gp1);
             if (gp1.onceA()) {
-                robot.downConeRighter();
-            } else if (gp1.onceB()) {
-                robot.upConeRighter();
+                robot.toggleConeRighter();
             }
             if (presetTask != null) {
                 if (gp1.onceX()) {
@@ -123,7 +121,7 @@ public abstract class TeleOpBase extends LinearOpMode {
                     robot.setIntakeRotateAngle(
                             robot.getIntakeRotateAngle() + gp2.rightStickX() / 50);
                 } else if (gp2.onceY() || gp2.rightBumper() && gp2.leftBumper()) {
-                    presetTask = new DeliverySlideTask(robot, 0, DELIVERY_POWER - 0.3);
+                    presetTask = new DeliverySlideTask(robot, 0, DELIVERY_POWER);
                 } else if (gp2.onceRightBumper()) {
                     presetTask = new ParallelTask(
                             new SeriesTask(

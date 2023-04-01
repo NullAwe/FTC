@@ -204,7 +204,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
 
     @Override
     public double getConeRighterUpPos() {
-        return 0.19;
+        return 0.18;
     };
 
     // Constant for delivery rotate actions
