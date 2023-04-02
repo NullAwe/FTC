@@ -105,7 +105,8 @@ public class WorldRobot2 extends HDWorldRobotBase {
     public static double OMEGA_WEIGHT = 1;
 
     // Auto & Tele-op parameters
-    public static double INTAKE_HEIGHT_INCHES = 19;
+    public static double AUTO_INTAKE_HEIGHT_INCHES = 19;
+    public static double TELEOP_INTAKE_HEIGHT_INCHES = 19;
     public static double INTAKE_ROTATE_DROP_DEGREE = -96;
     public static double DELIVERY_HEIGHT_HIGH = 22.5;
     public static double DELIVERY_HEIGHT_MID = 10;
@@ -159,9 +160,16 @@ public class WorldRobot2 extends HDWorldRobotBase {
         return 0.95;
     }
 
+    public static double CLAW_HALF_OPEN_POS = 0.88;
+    @Override
+    public double getClawHalfOpenPos() {
+        return CLAW_HALF_OPEN_POS;
+    }
+
+    public static double CLAW_CLOSE_POS = 0.8;
     @Override
     public double getClawClosePos() {
-        return 0.7;
+        return CLAW_CLOSE_POS;
     }
 
     @Override
@@ -216,8 +224,13 @@ public class WorldRobot2 extends HDWorldRobotBase {
     }
 
     @Override
-    public double getIntakeDeliveryHeightInch() {
-        return INTAKE_HEIGHT_INCHES;
+    public double getAutoIntakeDeliveryHeightInch() {
+        return AUTO_INTAKE_HEIGHT_INCHES;
+    }
+
+    @Override
+    public double getTeleopIntakeDeliveryHeightInch() {
+        return TELEOP_INTAKE_HEIGHT_INCHES;
     }
 
     @Override

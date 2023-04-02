@@ -3,16 +3,9 @@ package org.firstinspires.ftc.teamcode.auto.auto_robot1;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
 import org.firstinspires.ftc.teamcode.common.AngleType;
-import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.task.ConditionalTask;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
@@ -68,18 +61,18 @@ public abstract class AutoBase1 extends AutoBase {
                         new DeliveryRotateTask(robot,
                                 robot.getAutoDeliveryRotateAngleDegree() * getSign(),
                                 AngleType.DEGREE),
-                        new IntakeSlideTask(robot, robot.getIntakeDeliveryHeightInch(),
+                        new IntakeSlideTask(robot, robot.getAutoIntakeDeliveryHeightInch(),
                                 POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
                         new IntakeRotateTask(robot, robot.getIntakeDeliveryRotateDegree(),
                                 AngleType.DEGREE),
                         new IntakeSlideTask(robot,
-                                robot.getIntakeDeliveryHeightInch() -
+                                robot.getAutoIntakeDeliveryHeightInch() -
                                         DIST_INTAKE_DELIVERY_DROP_START,
                                 1.0,
                                 DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
                         new IntakeClawTask(robot, true),
                         new IntakeSlideTask(robot,
-                                robot.getIntakeDeliveryHeightInch(), 1.0,
+                                robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                 DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
                         getDeliveryTask()
                 ),
@@ -155,18 +148,18 @@ public abstract class AutoBase1 extends AutoBase {
                         new ParallelTask(
                                 new SeriesTask(
                                         new IntakeSlideTask(robot,
-                                                robot.getIntakeDeliveryHeightInch(),
+                                                robot.getAutoIntakeDeliveryHeightInch(),
                                                 POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
                                         new IntakeRotateTask(robot,
                                                 robot.getIntakeDeliveryRotateDegree(),
                                                 AngleType.DEGREE),
                                         new IntakeSlideTask(robot,
-                                                robot.getIntakeDeliveryHeightInch() -
+                                                robot.getAutoIntakeDeliveryHeightInch() -
                                                         DIST_INTAKE_DELIVERY_DROP_CYCLE, 1.0,
                                                 DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                         new IntakeClawTask(robot, true),
                                         new IntakeSlideTask(robot,
-                                                robot.getIntakeDeliveryHeightInch(), 1.0,
+                                                robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                                 DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                         getDeliveryTask()),
                                 new SeriesTask(

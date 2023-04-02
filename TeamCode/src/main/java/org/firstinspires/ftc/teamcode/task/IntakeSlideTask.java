@@ -14,7 +14,7 @@ public class IntakeSlideTask extends TimedTask {
     }
 
     public IntakeSlideTask(HDWorldRobotBase robot, double height, double power) {
-        this(robot, height, power, height < 0.5 ? 1500 : 500);
+        this(robot, height, power, height < 0.5 ? 600 : 500);
     }
     public IntakeSlideTask(HDWorldRobotBase robot, double height, double power,
             int finishTimeMillis) {

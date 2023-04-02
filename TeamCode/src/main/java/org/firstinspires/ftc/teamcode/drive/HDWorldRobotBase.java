@@ -11,10 +11,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.common.AngleType;
-import org.firstinspires.ftc.teamcode.task.ConeRighterTask;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
 import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
 import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
@@ -189,6 +187,11 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         isClawOpen = true;
     }
 
+    public void openClawHalf() {
+        setArmClawPosition(getClawHalfOpenPos());
+        isClawOpen = false;
+    }
+
     public void closeClaw() {
         setArmClawPosition(getClawClosePos());
         isClawOpen = false;
@@ -199,7 +202,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     }
 
     public abstract double getClawOpenPos();
-
+    public abstract double getClawHalfOpenPos();
     public abstract double getClawClosePos();
     // End: utils for intake claw action.
 
@@ -346,7 +349,16 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     // End: utils for delivery rotate actions
 
     // Auto or Tele-op parameters
-    public abstract double getIntakeDeliveryHeightInch();
+    public double getIntakeHeightMax() {
+        return 19.0;
+    }
+    public static double INTAKE_HEIGHT_LOW_JUNCTION = 12.5;
+    public double getIntakeHeightLowJunction() {
+        return INTAKE_HEIGHT_LOW_JUNCTION;
+    }
+
+    public abstract double getAutoIntakeDeliveryHeightInch();
+    public abstract double getTeleopIntakeDeliveryHeightInch();
     public abstract double getIntakeDeliveryRotateDegree();
     public abstract double getDeliveryHeightHigh();
     public abstract double getDeliveryHeightMedium();
