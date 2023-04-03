@@ -352,7 +352,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public double getIntakeHeightMax() {
         return 19.0;
     }
-    public static double INTAKE_HEIGHT_LOW_JUNCTION = 12.5;
+    public static double INTAKE_HEIGHT_LOW_JUNCTION = 14;
     public double getIntakeHeightLowJunction() {
         return INTAKE_HEIGHT_LOW_JUNCTION;
     }
@@ -360,6 +360,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public abstract double getAutoIntakeDeliveryHeightInch();
     public abstract double getTeleopIntakeDeliveryHeightInch();
     public abstract double getIntakeDeliveryRotateDegree();
+    public abstract int getIntakeSlideDropUpDelay();
     public abstract double getDeliveryHeightHigh();
     public abstract double getDeliveryHeightMedium();
     public double getDeliveryHeightLow() {

@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 public abstract class AutoBase1Exp extends AutoBase {
     public static double DIST_DRIVE_START = 52;
     public static double DIST_DRIVE_END = 23.5;
-    public static double DIST_DRIVE_PICKUP = 27;
+    public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot
     // driving characteristic difference between forward and backward
     public static double DIST_DRIVE_BACK_OFFSET = -0.5;
@@ -58,11 +58,13 @@ public abstract class AutoBase1Exp extends AutoBase {
 
     @Override
     protected Task createStartTask() {
-//        currSeq = robot.trajectorySequenceBuilder(new Pose2d())
-//                .strafeRight(DIST_DRIVE_START * getSign()).build();
-        Trajectory trajectory = robot.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START + 20, 0, 0))
-                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0, Math.toRadians(90))).build();
+        currSeq = robot.trajectorySequenceBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0, 0))
+                .turn(-getSign() * Math.toRadians(90)).build();
+//        Trajectory trajectory = robot.trajectoryBuilder(new Pose2d())
+//                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START + 20, 0, 0))
+//                .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0,
+//                        -getSign() * Math.toRadians(90))).build();
         return new ParallelTask(
                 new SeriesTask(
                         new DeliveryRotateTask(robot,
@@ -94,10 +96,11 @@ public abstract class AutoBase1Exp extends AutoBase {
                         new IntakeSlideTask(robot,
                                 robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                 DURATION_INTAKE_SLIDE_DROP_START_MILLIS),
+                        new SleepTask(1500),
                         getDeliveryTask()
                 ),
-                new DrivingTrajectoryTask(robot, trajectory)
-//                new DrivingTask(robot, currSeq)
+//                new DrivingTrajectoryTask(robot, trajectory)
+                new DrivingTask(robot, currSeq)
         );
     }
 
@@ -125,21 +128,25 @@ public abstract class AutoBase1Exp extends AutoBase {
 
         prevSeq = currSeq;
         TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
-        finishSeq.lineToLinearHeading(
-                new Pose2d(-DIST_DRIVE_START,
-                        (2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
-                        Math.toRadians(0)));
-
+        if (parkingZone == 2) {
+            finishSeq.turn(Math.toRadians(-90));
+        } else {
+            finishSeq.lineToLinearHeading(
+                    new Pose2d(-DIST_DRIVE_START,
+                            (2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
+                            Math.toRadians(0)));
 //        finishSeq.lineToLinearHeading(
 //                new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
 //                        -DIST_DRIVE_START * getSign(),
 //                        Math.toRadians(-90)));
+        }
         currSeq = finishSeq.build();
+
         Task drivingTask = new DrivingTask(robot, currSeq, false);
 
         return new ParallelTask(
                 new SeriesTask(
-                        new SleepTask(300),
+                        new IntakeRotateTask(robot, 0, AngleType.DEGREE),
                         new ParallelTask(
                                 new IntakeSlideTask(robot, 0),
                                 new DeliveryRotateTask(robot, 0, AngleType.DEGREE),
@@ -152,10 +159,13 @@ public abstract class AutoBase1Exp extends AutoBase {
     protected Task createCycleTask() {
         state = AutoState.CYCLE;
         TrajectorySequenceBuilder forwardSeq = robot.trajectorySequenceBuilder(currSeq.end());
-        forwardSeq.forward(DIST_DRIVE_PICKUP);
+        forwardSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                -getSign() * DIST_DRIVE_PICKUP, -getSign() * Math.toRadians(90)));
+//        forwardSeq.forward(DIST_DRIVE_PICKUP);
         prevSeq = forwardSeq.build();
         TrajectorySequenceBuilder backSeq = robot.trajectorySequenceBuilder(prevSeq.end());
-        backSeq.back(DIST_DRIVE_PICKUP + DIST_DRIVE_BACK_OFFSET);
+//        backSeq.back(DIST_DRIVE_PICKUP + DIST_DRIVE_BACK_OFFSET);
+        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0, -getSign() * Math.toRadians(90)));
         currSeq = backSeq.build();
 
         return new ParallelTask(

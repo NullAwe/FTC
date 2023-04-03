@@ -110,7 +110,7 @@ public class WorldRobot2 extends HDWorldRobotBase {
     public static double INTAKE_ROTATE_DROP_DEGREE = -96;
     public static double DELIVERY_HEIGHT_HIGH = 22.5;
     public static double DELIVERY_HEIGHT_MID = 10;
-    public static double DELIVERY_ROTATE_ANGLE_DEGREE = 60;
+    public static double AUTO_DELIVERY_ROTATE_ANGLE_DEGREE = 60;
 
     public WorldRobot2(HardwareMap hardwareMap, Telemetry telemetry) {
         super(new RobotInitParameters(hardwareMap, telemetry, createRoadRunnerParameters()));
@@ -160,13 +160,13 @@ public class WorldRobot2 extends HDWorldRobotBase {
         return 0.95;
     }
 
-    public static double CLAW_HALF_OPEN_POS = 0.88;
+    public static double CLAW_HALF_OPEN_POS = 0.85;
     @Override
     public double getClawHalfOpenPos() {
         return CLAW_HALF_OPEN_POS;
     }
 
-    public static double CLAW_CLOSE_POS = 0.8;
+    public static double CLAW_CLOSE_POS = 0.72;
     @Override
     public double getClawClosePos() {
         return CLAW_CLOSE_POS;
@@ -229,6 +229,11 @@ public class WorldRobot2 extends HDWorldRobotBase {
     }
 
     @Override
+    public int getIntakeSlideDropUpDelay() {
+        return 300;
+    }
+
+    @Override
     public double getTeleopIntakeDeliveryHeightInch() {
         return TELEOP_INTAKE_HEIGHT_INCHES;
     }
@@ -250,6 +255,6 @@ public class WorldRobot2 extends HDWorldRobotBase {
 
     @Override
     public double getAutoDeliveryRotateAngleDegree() {
-        return DELIVERY_ROTATE_ANGLE_DEGREE;
+        return AUTO_DELIVERY_ROTATE_ANGLE_DEGREE;
     }
 }

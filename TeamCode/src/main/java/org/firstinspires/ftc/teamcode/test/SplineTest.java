@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,10 +22,15 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  */
 @Config
 @Disabled
-@Autonomous(name="Back and Forth Test", group = "test")
-public class BackAndForthTest extends LinearOpMode {
-    public static double DISTANCE = 26; // in
-    public static double L_DISTANCE = 52; // in
+@Autonomous(name="Spline Test", group = "test")
+public class SplineTest extends LinearOpMode {
+    public static double X1 = -26; // in
+    public static double Y1 = 0; // in
+    public static double TANGENT1 = 0; // in
+    public static double X2 = -52; // in
+    public static double Y2 = 0; // in
+    public static double TANGENT2 = 90; // in
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,20 +45,11 @@ public class BackAndForthTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         timer.reset();
-        TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeLeft(L_DISTANCE)
-                .forward(DISTANCE)
-                .back(DISTANCE)
-                .forward(DISTANCE)
-                .back(DISTANCE)
-                .forward(DISTANCE)
-                .back(DISTANCE)
-                .forward(DISTANCE)
-                .back(DISTANCE)
-                .forward(DISTANCE)
-                .back(DISTANCE)
+        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(X1, Y1, Math.toRadians(TANGENT1)))
+                .lineToLinearHeading(new Pose2d(X2, Y2, Math.toRadians(TANGENT2)))
                 .build();
-        drive.followTrajectorySequence(trajectory);
+        drive.followTrajectory(trajectory);
 
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());

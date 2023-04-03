@@ -28,7 +28,7 @@ public abstract class AutoBase1 extends AutoBase {
     // The offset distance when driving backward compared to driving forward to compensate the robot
     // driving characteristic difference between forward and backward
     public static double DIST_DRIVE_BACK_OFFSET = -0.5;
-    public static double DIST_INTAKE_SLIDE_STEP = 1.3;
+    public static double DIST_INTAKE_SLIDE_STEP = 1.25;
     // The intake slide drop distance before dropping the cone (for the initial start run)
     public static double DIST_INTAKE_DELIVERY_DROP_START = 3;
     // The intake slide drop distance before dropping the cone (for the 5-cycle run)
@@ -108,7 +108,6 @@ public abstract class AutoBase1 extends AutoBase {
                 new Pose2d((2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
                         -DIST_DRIVE_START * getSign(),
                         Math.toRadians(-90)));
-//            finishSeq.forward((2 - parkingZone) * DIST_DRIVE_END * getSign());
         currSeq = finishSeq.build();
         Task drivingTask = new DrivingTask(robot, currSeq, false);
 

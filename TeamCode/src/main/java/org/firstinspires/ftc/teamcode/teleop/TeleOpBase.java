@@ -49,6 +49,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     public static int INTAKE_DELIVERY_PAUSE_MILLIS = 40;
     public static int DELIVERY_DELAY_MILLIS = 300;
     public static double DELIVERY_ANGLE_ROTATE_DEGREE = 65;
+    public static int INTAKE_DROP_DELAY = 200;
     private static int INTAKE_SLIDE_HEIGHT_MIN = -1;
     private static int DELIVERY_SLIDE_HEIGHT_MIN = -1;
     protected final ElapsedTime cycleTime = new ElapsedTime();
@@ -196,14 +197,14 @@ public abstract class TeleOpBase extends LinearOpMode {
                         new IntakeRotateTask(robot, robot.getIntakeDeliveryRotateDegree(),
                                 AngleType.DEGREE),
                         new IntakeSlideTask(robot, robot.getTeleopIntakeDeliveryHeightInch() - 1,
-                                INTAKE_SLIDER_POWER)));
+                                INTAKE_SLIDER_POWER, INTAKE_DROP_DELAY)));
     }
 
     private Task getSecureConeTask() {
         return new SeriesTask(
                 new IntakeClawTask(robot, /*open=*/false),
                 new IntakeSlideTask(robot, robot.getIntakeSlidePositionInches() + 4,
-                        INTAKE_SLIDER_POWER));
+                        INTAKE_SLIDER_POWER, 100));
     }
 
     private boolean readyToDeliverCone() {
@@ -235,7 +236,8 @@ public abstract class TeleOpBase extends LinearOpMode {
         } else {
             if (robot.isCone()) {
                 task.add(new IntakeClawTask(robot, IntakeClawTask.State.HALF_OPEN));
-                task.add(new IntakeSlideTask(robot, getIntakeHeightMax(), 1.0, 150));
+                task.add(new IntakeSlideTask(robot, getIntakeHeightMax(), 1.0,
+                        robot.getIntakeSlideDropUpDelay()));
             }
             task.add(new IntakeRotateTask(robot, 0, AngleType.DEGREE));
             if (robot.isClawOpen()) {
