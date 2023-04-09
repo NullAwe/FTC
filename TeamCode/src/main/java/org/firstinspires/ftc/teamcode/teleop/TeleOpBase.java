@@ -62,6 +62,8 @@ public abstract class TeleOpBase extends LinearOpMode {
     private Task currentTask = null;
     private Task resetIntakeTask = null;
 
+    private boolean debugMode = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, ftcDashboard.getTelemetry());
@@ -82,92 +84,123 @@ public abstract class TeleOpBase extends LinearOpMode {
             // Call this every cycle to cache the encoder position and velocity.
             robot.updateEncoderValues();
 
-            driveRobot(gp1);
-            if (gp1.onceA()) {
-                robot.toggleConeRighter();
-            }
-            if (resetIntakeTask != null) {
-                if (gp1.onceX()) {
-                    resetIntakeTask.cancel();
-                    resetIntakeTask = null;
-                } else if (resetIntakeTask.perform()) {
-                    resetIntakeTask = null;
+            if (!debugMode) {
+                driveRobot(gp1);
+                if (gp1.onceA()) {
+                    robot.toggleConeRighter();
+                }
+                if (resetIntakeTask != null) {
+                    if (gp1.onceX()) {
+                        resetIntakeTask.cancel();
+                        resetIntakeTask = null;
+                    } else if (resetIntakeTask.perform()) {
+                        resetIntakeTask = null;
+                    }
+                }
+
+                if (currentTask != null) {
+                    if (gp1.onceX()) {
+                        currentTask.cancel();
+                        currentTask = null;
+                    } else if (currentTask.perform()) {
+                        currentTask = null;
+                    }
+                } else {
+                    if (gp2.onceY() || gp2.rightBumper() && gp2.leftBumper()) {
+                        currentTask = new DeliverySlideTask(robot, 0, RETRACT_POWER);
+                    } else {
+                        if (gp2.leftTrigger() > 0.1 && gp2.rightTrigger() > 0.1) {
+                            robot.setDeliveryRotateAngle(0);
+                        } else if (gp2.onceLeftTrigger()) {
+                            robot.setDeliveryRotateAngle(
+                                    Math.toRadians(DELIVERY_ANGLE_ROTATE_DEGREE));
+                        } else if (gp2.onceRightTrigger()) {
+                            robot.setDeliveryRotateAngle(
+                                    -Math.toRadians(DELIVERY_ANGLE_ROTATE_DEGREE));
+                        }
+                    }
+                    if (resetIntakeTask == null) {
+                        double intakeHeight = robot.getIntakeSlidePositionInches();
+                        if (gp2.onceX()) {
+                            // Open or close claw/gripper
+                            robot.toggleClaw();
+                            releaseTime.reset();
+                        } else if (gp2.onceB() && !robot.isClawOpen()) {
+                            currentTask = getPickUpConeTask();
+                        } else if (gp2.onceA()) {
+                            resetIntakeTask = getResetIntakeTask();
+                        } else if (Math.abs(gp2.rightStickY()) > 0.1 &&
+                                Math.abs(gp2.rightStickY()) > Math.abs(gp2.rightStickX())) {
+                            intakeHeight -= gp2.rightStickY() / 0.2;
+                            intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
+                                    INTAKE_SLIDE_HEIGHT_MIN);
+                            currentTask =
+                                    new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
+                        } else if (gp2.onceDpadUp()) {
+                            intakeHeight += 1.25;
+                            intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
+                                    INTAKE_SLIDE_HEIGHT_MIN);
+                            currentTask =
+                                    new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
+                        } else if (gp2.onceDpadDown()) {
+                            intakeHeight -= 1.25;
+                            intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
+                                    INTAKE_SLIDE_HEIGHT_MIN);
+                            currentTask =
+                                    new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
+                        } else if (Math.abs(gp2.rightStickX()) > 0.1) {
+                            robot.setIntakeRotateAngle(
+                                    robot.getIntakeRotateAngle() + gp2.rightStickX() / 50);
+                        } else if (gp2.onceRightBumper() && readyToDeliverCone()) {
+                            currentTask = new SeriesTask(
+                                    new SleepTask(DELIVERY_DELAY_MILLIS),
+                                    new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(),
+                                            DELIVERY_POWER));
+                            resetIntakeTask = getResetIntakeTask();
+                        } else if (gp2.onceLeftBumper() && readyToDeliverCone()) {
+                            currentTask = new SeriesTask(
+                                    new SleepTask(DELIVERY_DELAY_MILLIS),
+                                    new DeliverySlideTask(robot, robot.getDeliveryHeightMedium(),
+                                            DELIVERY_POWER));
+                            resetIntakeTask = getResetIntakeTask();
+                        } else if (Math.abs(gp2.leftStickY()) > 0.1) {
+                            double deliveryHeight = robot.getDeliverySlidePositionInches();
+                            deliveryHeight -= gp2.leftStickY() / 0.2;
+                            deliveryHeight =
+                                    Math.max(Math.min(deliveryHeight, getDeliveryHeightMax()),
+                                            DELIVERY_SLIDE_HEIGHT_MIN);
+                            currentTask =
+                                    new DeliverySlideTask(robot, deliveryHeight, DELIVERY_POWER);
+                        } else if (gp2.onceStart()) {
+                            currentTask = new IntakeSlideTask(robot,
+                                    robot.getIntakeHeightLowJunction());
+                        } else if (robot.isCone() &&
+                                robot.getConeDistanceInch() < MAX_CONE_GRABBING_DIST &&
+                                robot.isClawOpen() && releaseTime.milliseconds() > MIN_GAP_MILLIS) {
+                            currentTask = getSecureConeTask();
+                        }
+                    }
+                }
+            } else {
+                if (Math.abs(gp2.leftStickY()) > 0.1) {
+
+                }
+                if (Math.abs(gp2.rightStickY()) > 0.1) {
+
                 }
             }
 
-            if (currentTask != null) {
-                if (gp1.onceX()) {
-                    currentTask.cancel();
-                    currentTask = null;
-                } else if (currentTask.perform()) {
-                    currentTask = null;
-                }
-            } else {
-                if (gp2.onceY() || gp2.rightBumper() && gp2.leftBumper()) {
-                    currentTask = new DeliverySlideTask(robot, 0, RETRACT_POWER);
-                } else {
-                    if (gp2.leftTrigger() > 0.1 && gp2.rightTrigger() > 0.1) {
-                        robot.setDeliveryRotateAngle(0);
-                    } else if (gp2.onceLeftTrigger()) {
-                        robot.setDeliveryRotateAngle(Math.toRadians(DELIVERY_ANGLE_ROTATE_DEGREE));
-                    } else if (gp2.onceRightTrigger()) {
-                        robot.setDeliveryRotateAngle(-Math.toRadians(DELIVERY_ANGLE_ROTATE_DEGREE));
+            if (gp2.onceBack()) {
+                if (debugMode) debugMode = false;
+                else {
+                    debugMode = true;
+                    if (currentTask != null) {
+                        currentTask.cancel();
+                        currentTask = null;
                     }
-                }
-                if (resetIntakeTask == null) {
-                    double intakeHeight = robot.getIntakeSlidePositionInches();
-                    if (gp2.onceX()) {
-                        // Open or close claw/gripper
-                        robot.toggleClaw();
-                        releaseTime.reset();
-                    } else if (gp2.onceB() && !robot.isClawOpen()) {
-                        currentTask = getPickUpConeTask();
-                    } else if (gp2.onceA()) {
-                        resetIntakeTask = getResetIntakeTask();
-                    } else if (Math.abs(gp2.rightStickY()) > 0.1 &&
-                            Math.abs(gp2.rightStickY()) > Math.abs(gp2.rightStickX())) {
-                        intakeHeight -= gp2.rightStickY() / 0.2;
-                        intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
-                                INTAKE_SLIDE_HEIGHT_MIN);
-                        currentTask = new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
-                    } else if (gp2.onceDpadUp()) {
-                        intakeHeight += 1.25;
-                        intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
-                                INTAKE_SLIDE_HEIGHT_MIN);
-                        currentTask = new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
-                    } else if (gp2.onceDpadDown()) {
-                        intakeHeight -= 1.25;
-                        intakeHeight = Math.max(Math.min(intakeHeight, getIntakeHeightMax()),
-                                INTAKE_SLIDE_HEIGHT_MIN);
-                        currentTask = new IntakeSlideTask(robot, intakeHeight, INTAKE_SLIDER_POWER);
-                    } else if (Math.abs(gp2.rightStickX()) > 0.1) {
-                        robot.setIntakeRotateAngle(
-                                robot.getIntakeRotateAngle() + gp2.rightStickX() / 50);
-                    } else if (gp2.onceRightBumper() && readyToDeliverCone()) {
-                        currentTask = new SeriesTask(
-                                new SleepTask(DELIVERY_DELAY_MILLIS),
-                                new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(),
-                                        DELIVERY_POWER));
-                        resetIntakeTask = getResetIntakeTask();
-                    } else if (gp2.onceLeftBumper() && readyToDeliverCone()) {
-                        currentTask = new SeriesTask(
-                                new SleepTask(DELIVERY_DELAY_MILLIS),
-                                new DeliverySlideTask(robot, robot.getDeliveryHeightMedium(),
-                                        DELIVERY_POWER));
-                        resetIntakeTask = getResetIntakeTask();
-                    } else if (Math.abs(gp2.leftStickY()) > 0.1) {
-                        double deliveryHeight = robot.getDeliverySlidePositionInches();
-                        deliveryHeight -= gp2.leftStickY() / 0.2;
-                        deliveryHeight = Math.max(Math.min(deliveryHeight, getDeliveryHeightMax()),
-                                DELIVERY_SLIDE_HEIGHT_MIN);
-                        currentTask = new DeliverySlideTask(robot, deliveryHeight, DELIVERY_POWER);
-                    } else if (gp2.onceStart()) {
-                        currentTask = new IntakeSlideTask(robot,
-                                robot.getIntakeHeightLowJunction());
-                    } else if (robot.isCone() &&
-                            robot.getConeDistanceInch() < MAX_CONE_GRABBING_DIST &&
-                            robot.isClawOpen() && releaseTime.milliseconds() > MIN_GAP_MILLIS) {
-                        currentTask = getSecureConeTask();
+                    if (resetIntakeTask != null) {
+                        resetIntakeTask.cancel();
+                        resetIntakeTask = null;
                     }
                 }
             }

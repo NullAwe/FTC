@@ -105,8 +105,8 @@ public class WorldRobot1 extends HDWorldRobotBase {
     public static double AUTO_INTAKE_HEIGHT_INCHES = 17.5;
     public static double TELEOP_INTAKE_HEIGHT_INCHES = 16.5;
     public static double INTAKE_ROTATE_DROP_DEGREE = -96;
-    public static double DELIVERY_HEIGHT_HIGH = 26;
-    public static double DELIVERY_HEIGHT_MID = 14;
+    public static double DELIVERY_HEIGHT_HIGH = 25;
+    public static double DELIVERY_HEIGHT_MID = 13;
     public static double AUTO_DELIVERY_ROTATE_ANGLE_DEGREE = 60;
 
     public WorldRobot1(HardwareMap hardwareMap, Telemetry telemetry) {

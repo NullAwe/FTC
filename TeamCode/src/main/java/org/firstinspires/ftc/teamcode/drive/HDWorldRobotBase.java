@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -62,6 +63,8 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         super(initParameters);
 
         deliverySlide = hardwareMap.get(DcMotorEx.class, "deliverySlide");
+        deliverySlide.setDirection(DcMotorSimple.Direction.REVERSE);
+
         intakeSlide = hardwareMap.get(DcMotorEx.class, "intakeSlide");
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         intakeRotate = hardwareMap.get(Servo.class, "intakeRotate");

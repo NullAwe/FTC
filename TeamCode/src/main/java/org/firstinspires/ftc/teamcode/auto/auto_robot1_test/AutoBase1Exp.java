@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.task.ConditionalTask;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
 import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
 import org.firstinspires.ftc.teamcode.task.DrivingTask;
-import org.firstinspires.ftc.teamcode.task.DrivingTrajectoryTask;
+//import org.firstinspires.ftc.teamcode.task.DrivingTrajectoryTask;
 import org.firstinspires.ftc.teamcode.task.IntakeClawTask;
 import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
 import org.firstinspires.ftc.teamcode.task.IntakeSlideTask;
@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
 public abstract class AutoBase1Exp extends AutoBase {
-    public static double DIST_DRIVE_START = 52;
+    public static double DIST_DRIVE_START = 49;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot
