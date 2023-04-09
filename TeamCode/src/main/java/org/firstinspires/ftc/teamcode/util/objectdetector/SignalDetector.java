@@ -46,20 +46,21 @@ public abstract class SignalDetector {
         if (tfod == null) return -1;
 
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        int labelIndex = -1;
         if (updatedRecognitions != null) {
             // Pick the one with highest confidence
-            String label = "none";
             double confidence = 0.0;
             for (Recognition recognition : updatedRecognitions) {
                 if (recognition.getConfidence() > confidence) {
                     confidence = recognition.getConfidence();
-                    label = recognition.getLabel();
+                    // A valid label index is 1-based (1, 2, or 3)
+                    labelIndex = Arrays.asList(getLabels()).indexOf(recognition.getLabel()) + 1;
                 }
             }
-//            Log.i("allendebug", label);
-//            Log.i("allendebug", Arrays.asList(getLabels()).indexOf(label) + "");
-            return Arrays.asList(getLabels()).indexOf(label);
         }
-        return -1;
+        return labelIndex;
     }
+
+    // Side: 1, 2, 3
+    public abstract String getLabel(int side);
 }

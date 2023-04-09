@@ -1,35 +1,51 @@
 package org.firstinspires.ftc.teamcode.util.objectdetector;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-public class CustomSignalDetector extends SignalDetector {
-    private static final String TFOD_MODEL_FILE_FRUIT =
-            "/sdcard/FIRST/tflitemodels/HD_apple_strawberry_banana.tflite";
-    private static final String TFOD_MODEL_FILE_LOGO =
-            "/sdcard/FIRST/tflitemodels/hd_logo.tflite";
-    private static final String TFOD_MODEL_FILE_FRUIT_WORLDS =
-            "/sdcard/FIRST/tflitemodels/ftc_18225_fruit.tflite";
-    private static final String TFOD_MODEL_FILE_SHAPE_WORLDS =
-            "/sdcard/FIRST/tflitemodels/ftc_18225_shape.tflite";
-    private static final String TFOD_MODEL_FILE_LETTER_WORLDS =
-            "/sdcard/FIRST/tflitemodels/ftc_18225_letter.tflite";
-    private static final String[] FRUIT_LABELS = {"1-apple", "2-strawberry", "3-banana"};
-    private static final String[] LOGO_LABELS = {"1-robot", "2-hdlogo", "3-ftclogo"};
-    private static final String[] FRUIT_WORLDS_LABELS = {"1-apple", "2-banana", "3-grape"};
-    private static final String[] SHAPE_WORLDS_LABELS =
-            {"1-yellow", "2-checkerboard","3-triangle"};
-    private static final String[] LETTER_WORLDS_LABELS = {"1-A", "2-bar","3-bunny"};
+import java.util.HashMap;
+import java.util.Map;
 
+@Config
+public class CustomSignalDetector extends SignalDetector {
+    public enum TF_MODEL {
+        FRUIT,
+        LETTER_WORLD,
+        LOGO_WORLD,
+    }
+
+    public static TF_MODEL currentModel = TF_MODEL.LETTER_WORLD;
+
+    private static Map<TF_MODEL, String> modelMap = new HashMap<>();
+    private static Map<TF_MODEL, String[]> labelMap = new HashMap<>();
+
+    public CustomSignalDetector() {
+        modelMap.put(TF_MODEL.FRUIT,
+                "/sdcard/FIRST/tflitemodels/HD_apple_strawberry_banana.tflite");
+        modelMap.put(TF_MODEL.LOGO_WORLD,
+                "/sdcard/FIRST/tflitemodels/ftc_18225_hd_logo.tflite");
+        modelMap.put(TF_MODEL.LETTER_WORLD,
+                "/sdcard/FIRST/tflitemodels/ftc_18225_letter.tflite");
+
+        labelMap.put(TF_MODEL.FRUIT, new String[]{"1-apple", "2-strawberry", "3-banana"});
+        labelMap.put(TF_MODEL.LOGO_WORLD, new String[]{"1-robot", "2-hdlogo", "3-ftclogo"});
+        labelMap.put(TF_MODEL.LETTER_WORLD, new String[]{"1-A", "2-bar", "3-bunny"});
+    }
 
     @Override
     protected String[] getLabels() {
-        return FRUIT_LABELS;
-//        return LOGO_LABELS;
+        return labelMap.get(currentModel);
     }
 
     @Override
     protected void loadTFModel(TFObjectDetector tfod) {
-        tfod.loadModelFromFile(TFOD_MODEL_FILE_FRUIT, FRUIT_LABELS);
-//        tfod.loadModelFromFile(TFOD_MODEL_FILE_LOGO, LOGO_LABELS);
+        tfod.loadModelFromFile(modelMap.get(currentModel), getLabels());
+    }
+
+    @Override
+    public String getLabel(int index) {
+        if (index < 1 || index > 3) return String.format("%d invalid index", index);
+        return getLabels()[index - 1];
     }
 }

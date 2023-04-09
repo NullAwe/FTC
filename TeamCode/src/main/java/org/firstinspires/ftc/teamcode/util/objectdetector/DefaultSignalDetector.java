@@ -15,4 +15,10 @@ public class DefaultSignalDetector extends SignalDetector {
     protected void loadTFModel(TFObjectDetector tfod) {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
+
+    @Override
+    public String getLabel(int index) {
+        if (index < 1 || index > 3) return String.format("%d invalid index", index);
+        return LABELS[index - 1];
+    }
 }

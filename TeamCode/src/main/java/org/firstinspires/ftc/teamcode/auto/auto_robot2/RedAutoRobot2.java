@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto.auto_robot2;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -9,7 +8,7 @@ import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot2.WorldRobot2;
 
 @Autonomous(name="Auto - Robot 2 - Red", group="Auto2")
-public class RedAutoRobot2 extends AutoBase2 {
+public class RedAutoRobot2 extends AutoBaseRobot2 {
     @Override
     protected boolean isBlueCorner() {
         return false;

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,8 +14,7 @@ import org.firstinspires.ftc.teamcode.task.Task;
 public abstract class AutoBase extends LinearOpMode {
     public static int AA_NUM_CYCLES = 5;
     public static int AA_TOTAL_TIME_MILLIS = 30000;
-    public static double DIST_DRIVE_START = 52;
-    public static int parkingZone = 3; // 1, 2, 3
+    public static int parkingZone = 2; // 1, 2, 3
 
     protected final ElapsedTime timer = new ElapsedTime();
     protected HDWorldRobotBase robot;
@@ -30,9 +27,6 @@ public abstract class AutoBase extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = createRobot(hardwareMap, telemetry);
         resetRobot();
-
-        currSeq = robot.trajectorySequenceBuilder(new Pose2d(0, 0))
-                .strafeRight(DIST_DRIVE_START * getSign()).build();
         Task task = createStartTask();
 
         // Signal detection is running in a background thread to avoid blocking the main thread. It
@@ -43,14 +37,14 @@ public abstract class AutoBase extends LinearOpMode {
         while (!isStopRequested() && !isStarted()) {
             if (signalDetectionTask.perform()) {
                 int newPos = signalDetectionTask.getRecognizedSignal();
-                if (newPos != -1) parkingZone = newPos;
+                if (newPos >= 1 && newPos <= 3) parkingZone = newPos;
                 if (isStarted()) break;
                 signalDetectionTask.startDetection();
-                telemetry.addData("Signal", "position: %d", parkingZone);
+                telemetry.addData("Signal", "position: %s", robot.getSignalLabel(parkingZone));
                 telemetry.update();
             }
         }
-        if (parkingZone == -1) parkingZone = 1;
+        if (parkingZone < 1 || parkingZone > 3) parkingZone = 2;
 
         timer.reset();
         boolean done = false;

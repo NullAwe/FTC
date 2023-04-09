@@ -143,8 +143,12 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public int detectSignal() {
         if (signalDetector == null) return -1;
-
         return signalDetector.detectSignal();
+    }
+
+    public String getSignalLabel(int index) {
+        if (signalDetector == null) return "No signal detector";
+        return signalDetector.getLabel(index);
     }
 
     public boolean isBlueCone() {
@@ -355,7 +359,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     public double getIntakeHeightMax() {
         return 19.0;
     }
-    public static double INTAKE_HEIGHT_LOW_JUNCTION = 14;
+    public static double INTAKE_HEIGHT_LOW_JUNCTION = 14.5;
     public double getIntakeHeightLowJunction() {
         return INTAKE_HEIGHT_LOW_JUNCTION;
     }

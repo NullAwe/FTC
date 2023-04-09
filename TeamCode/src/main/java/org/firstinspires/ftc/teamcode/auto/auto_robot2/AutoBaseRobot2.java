@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto.auto_robot2;
 
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +23,7 @@ import org.firstinspires.ftc.teamcode.task.Task;
 import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
-public abstract class AutoBase2 extends AutoBase {
+public abstract class AutoBaseRobot2 extends AutoBase {
     public static double DIST_DRIVE_START = 52;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 25.5;
