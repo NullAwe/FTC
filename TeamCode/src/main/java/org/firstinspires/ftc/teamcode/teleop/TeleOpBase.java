@@ -182,26 +182,26 @@ public abstract class TeleOpBase extends LinearOpMode {
                     }
                 }
             } else {
-                if (Math.abs(gp2.leftStickY()) > 0.1) {
-
+                if (currentTask.perform() || gp2.onceX()) {
+                    currentTask.cancel();
+                    currentTask = null;
                 }
-                if (Math.abs(gp2.rightStickY()) > 0.1) {
-
-                }
+                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY());
+                robot.setIntakeSlidePowerWithoutEncoder(-gp2.rightStickY());
             }
 
             if (gp2.onceBack()) {
-                if (debugMode) debugMode = false;
-                else {
-                    debugMode = true;
-                    if (currentTask != null) {
-                        currentTask.cancel();
-                        currentTask = null;
-                    }
-                    if (resetIntakeTask != null) {
-                        resetIntakeTask.cancel();
-                        resetIntakeTask = null;
-                    }
+                if (currentTask != null) currentTask.cancel();
+                currentTask = null;
+                if (resetIntakeTask != null) resetIntakeTask.cancel();
+                resetIntakeTask = null;
+                debugMode = !debugMode;
+                if (debugMode) {
+                    currentTask = new ParallelTask(
+                            getPickUpConeTask(),
+                            new DeliverySlideTask(robot, 0));
+                } else {
+                    robot.restartMotors();
                 }
             }
 

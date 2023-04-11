@@ -80,6 +80,11 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         initObjectDetectorResources(hardwareMap);
     }
 
+    public void restartMotors() {
+        intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        deliverySlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
     /**
      * Initialize the Vuforia localization engine.
      */
@@ -231,6 +236,11 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         intakeSlide.setPower(power);
     }
 
+    public void setIntakeSlidePowerWithoutEncoder(double pow) {
+        intakeSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlide.setPower(pow);
+    }
+
     public abstract double getIntakeSlideTicksPerInch();
 
     public double getIntakeSlidePositionInches() {
@@ -279,6 +289,10 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public void setDeliverySlidePower(double power) {
         deliverySlide.setPower(power);
+    }
+    public void setDeliverySlidePowerWithoutEncoder(double pow) {
+        deliverySlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        deliverySlide.setPower(pow);
     }
 
     public double getDeliveryRotateAngle() {

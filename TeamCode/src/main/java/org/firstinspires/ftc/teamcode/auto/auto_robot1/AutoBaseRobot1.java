@@ -21,12 +21,12 @@ import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
 public abstract class AutoBaseRobot1 extends AutoBase {
-    public static double DIST_DRIVE_START = 49;
+    public static double DIST_DRIVE_START = 50;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot
     // driving characteristic difference between forward and backward
-    public static double DIST_DRIVE_BACK_OFFSET = 0.5;
+    public static double DIST_DRIVE_BACK_OFFSET = 0.3;
     public static double DIST_INTAKE_SLIDE_STEP = 1.25;
     // The intake slide drop distance before dropping the cone (for the initial start run)
     public static double DIST_INTAKE_DELIVERY_DROP_START = 3;
@@ -41,7 +41,8 @@ public abstract class AutoBaseRobot1 extends AutoBase {
     public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 40;
     // Total time needed for moving the intake slide up to the highest position.
     public static int DURATION_INTAKE_SLIDE_UP_MILLIS = 500;
-    // Total time needed for moving the intake slide down to the ready position.
+    // Total time needed for moving the intake slide down to the
+    // ready position.
     public static int DURATION_INTAKE_SLIDE_DOWN_MILLIS = 500;
     // Total time needed for moving the intake slide down to ready to drop cone position.
     public static int DURATION_INTAKE_SLIDE_DROP_START_MILLIS = 300;
@@ -120,12 +121,13 @@ public abstract class AutoBaseRobot1 extends AutoBase {
         prevSeq = currSeq;
         TrajectorySequenceBuilder finishSeq = robot.trajectorySequenceBuilder(currSeq.end());
         if (parkingZone == 2) {
-            finishSeq.turn(Math.toRadians(-90));
+            finishSeq.turn(Math.toRadians(90 * getSign()));
         } else {
+            double pos = (parkingZone - 2) * DIST_DRIVE_END;
+            if (parkingZone == 1 && !isBlueCorner()) pos -= 2;
+            else if (parkingZone == 3 && isBlueCorner()) pos += 2;
             finishSeq.lineToLinearHeading(
-                    new Pose2d(-DIST_DRIVE_START,
-                            (2 - parkingZone) * DIST_DRIVE_END * getSign() + 3,
-                            Math.toRadians(0)));
+                    new Pose2d(-DIST_DRIVE_START, pos, Math.toRadians(0)));
         }
         currSeq = finishSeq.build();
 
