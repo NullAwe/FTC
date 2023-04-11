@@ -13,6 +13,7 @@ public class CustomSignalDetector extends SignalDetector {
         FRUIT,
         LETTER_WORLD,
         LOGO_WORLD,
+        WORLD,
     }
 
     public static TF_MODEL currentModel = TF_MODEL.LETTER_WORLD;
@@ -27,10 +28,13 @@ public class CustomSignalDetector extends SignalDetector {
                 "/sdcard/FIRST/tflitemodels/ftc_18225_hd_logo.tflite");
         modelMap.put(TF_MODEL.LETTER_WORLD,
                 "/sdcard/FIRST/tflitemodels/ftc_18225_letter.tflite");
+        modelMap.put(TF_MODEL.WORLD,
+                "/sdcard/FIRST/tflitemodels/ftc_18225_world.tflite");
 
         labelMap.put(TF_MODEL.FRUIT, new String[]{"1-apple", "2-strawberry", "3-banana"});
         labelMap.put(TF_MODEL.LOGO_WORLD, new String[]{"1-robot", "2-hdlogo", "3-ftclogo"});
         labelMap.put(TF_MODEL.LETTER_WORLD, new String[]{"1-A", "2-bar", "3-bunny"});
+        labelMap.put(TF_MODEL.WORLD, new String[]{"1-bunny", "2-logo", "3-robot"});
     }
 
     @Override
