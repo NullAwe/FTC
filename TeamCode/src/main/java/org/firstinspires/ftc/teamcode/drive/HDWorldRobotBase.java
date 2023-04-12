@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.util.objectdetector.CameraFrameSource;
 import org.firstinspires.ftc.teamcode.util.objectdetector.CameraWrapper;
 import org.firstinspires.ftc.teamcode.util.objectdetector.ConeDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.CustomSignalDetector;
+import org.firstinspires.ftc.teamcode.util.objectdetector.HSV;
 import org.firstinspires.ftc.teamcode.util.objectdetector.ImageProcessor;
 import org.firstinspires.ftc.teamcode.util.objectdetector.PoleDetector;
 import org.firstinspires.ftc.teamcode.util.objectdetector.SignalDetector;
@@ -45,6 +46,7 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
     private final DcMotorEx intakeSlide;
     private final DcMotorEx deliverySlide;
     private final RevColorSensorV3 clawColorSensor;
+    private final RevColorSensorV3 deliveryColorSensor;
     private final WebcamName backWebcam;
     private final WebcamName frontWebcam;
     // Cached Encoder values.
@@ -71,6 +73,8 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         deliveryRotate = hardwareMap.get(Servo.class, "deliveryRotate");
         coneRighter = hardwareMap.get(Servo.class, "coneRighter");
         clawColorSensor = hardwareMap.get(RevColorSensorV3.class, "clawColorSensor");
+        deliveryColorSensor = hardwareMap.get(RevColorSensorV3.class, "deliveryColorSensor");
+
 
         intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -156,6 +160,20 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
         return signalDetector.getLabel(index);
     }
 
+    public boolean isBlueCone(HSV hsv) {
+        return ImageProcessor.isBlueWithMinSaturation(hsv);
+    }
+
+    public boolean isRedCone(HSV hsv) {
+        return ImageProcessor.isRedWithMinSaturation(hsv);
+    }
+
+    public boolean deliveryHasCone() {
+        HSV hsv = ImageProcessor.ColorToHsv(getDeliveryColor());
+        double dist = getDeliveryDistanceInch();
+        return dist < 1.5 && ((hsv.h > 190 && hsv.h < 260) || hsv.h > 340 || hsv.h < 70) && hsv.s > 30;
+    }
+
     public boolean isBlueCone() {
         return ImageProcessor.isBlueWithMinSaturation(ImageProcessor.ColorToHsv(getConeColor()));
     }
@@ -179,6 +197,14 @@ public abstract class HDWorldRobotBase extends HDRobotBase {
 
     public double getConeDistanceInch() {
         return clawColorSensor.getDistance(DistanceUnit.INCH);
+    }
+
+    public NormalizedRGBA getDeliveryColor() {
+        return deliveryColorSensor.getNormalizedColors();
+    }
+
+    public double getDeliveryDistanceInch() {
+        return deliveryColorSensor.getDistance(DistanceUnit.INCH);
     }
 
     // Begin: utils for intake claw action.

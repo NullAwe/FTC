@@ -4,8 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.auto.AutoStates;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.task.CheckConditionalTask;
 import org.firstinspires.ftc.teamcode.task.ConditionalTask;
 import org.firstinspires.ftc.teamcode.task.DeliveryRotateTask;
 import org.firstinspires.ftc.teamcode.task.DeliverySlideTask;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.teamcode.task.ParallelTask;
 import org.firstinspires.ftc.teamcode.task.SeriesTask;
 import org.firstinspires.ftc.teamcode.task.SleepTask;
 import org.firstinspires.ftc.teamcode.task.Task;
+import org.firstinspires.ftc.teamcode.task.UpdateConeInDeliveryTask;
 import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 
 @Config
@@ -102,7 +105,8 @@ public abstract class AutoBaseRobot1 extends AutoBase {
         return new ParallelTask(
                 new SeriesTask(
                         new IntakeRotateTask(robot, 0, AngleType.DEGREE),
-                        new IntakeSlideTask(robot, (4 - cycleNumber) * DIST_INTAKE_SLIDE_STEP,
+                        new IntakeSlideTask(robot,
+                                (5 - autoStates.getCycleNumber()) * DIST_INTAKE_SLIDE_STEP,
                                 POWER_INTAKE_DOWN, DURATION_INTAKE_SLIDE_DOWN_MILLIS),
                         new IntakeClawTask(robot, true)
                 ),
@@ -147,7 +151,7 @@ public abstract class AutoBaseRobot1 extends AutoBase {
     @Override
     protected Task createCycleTask() {
         state = AutoState.CYCLE;
-        double yOffset = (cycleNumber - 1) * DIST_DRIVE_BACK_OFFSET;
+        double yOffset = (autoStates.getCycleNumber() - 1) * DIST_DRIVE_BACK_OFFSET;
         TrajectorySequenceBuilder forwardSeq = robot.trajectorySequenceBuilder(currSeq.end());
         forwardSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
                 -getSign() * (DIST_DRIVE_PICKUP + yOffset), -getSign() * Math.toRadians(90)));
@@ -158,7 +162,12 @@ public abstract class AutoBaseRobot1 extends AutoBase {
         currSeq = backSeq.build();
 
         return new ParallelTask(
-                new DeliverySlideTask(robot, 0, POWER_RETRACT),
+                new SeriesTask(
+                        new DeliverySlideTask(robot, 0, POWER_RETRACT),
+                        new UpdateConeInDeliveryTask(robot, autoStates)),
+                new IntakeSlideTask(robot,
+                        (5 - autoStates.getCycleNumber()) * DIST_INTAKE_SLIDE_STEP,
+                        POWER_INTAKE_DOWN, DURATION_INTAKE_SLIDE_DOWN_MILLIS),
                 new SeriesTask(
                         new SleepTask(WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS),
                         new ParallelTask(
@@ -168,9 +177,11 @@ public abstract class AutoBaseRobot1 extends AutoBase {
                                                 new SleepTask(1400),
                                                 new ConditionalTask(() -> robot.isCone() &&
                                                         robot.getConeDistanceInch() < 1.5)),
-                                        new IntakeClawTask(robot, false))),
+                                        new CheckConditionalTask(() -> !autoStates.isConeInDelivery(),
+                                                new IntakeClawTask(robot, false)))),
                         new ParallelTask(
                                 new SeriesTask(
+                                        new CheckConditionalTask(() -> !autoStates.isConeInDelivery(),
                                         new ParallelTask(
                                                 new IntakeSlideTask(robot,
                                                         robot.getAutoIntakeDeliveryHeightInch(),
@@ -179,13 +190,14 @@ public abstract class AutoBaseRobot1 extends AutoBase {
                                                 new SeriesTask(
                                                         new SleepTask(
                                                                 DELAY_INTAKE_ROTATE_BASE_MILLIS +
-                                                                        (cycleNumber - 1) *
+                                                                        (autoStates.getCycleNumber() - 1) *
                                                                                 DELAY_INTAKE_ROTATE_STEP_MILLIS),
                                                         new IntakeRotateTask(robot,
                                                                 robot.getIntakeDeliveryRotateDegree(),
                                                                 AngleType.DEGREE)
                                                 )
-                                        ),
+                                        )),
+                                        new CheckConditionalTask(() -> !autoStates.isConeInDelivery(),
                                         new ParallelTask(
                                                 new IntakeSlideTask(robot,
                                                         robot.getAutoIntakeDeliveryHeightInch() -
@@ -199,7 +211,7 @@ public abstract class AutoBaseRobot1 extends AutoBase {
                                                         new IntakeClawTask(robot,
                                                                 IntakeClawTask.State.HALF_OPEN)
                                                 )
-                                        ),
+                                        )),
                                         new IntakeSlideTask(robot,
                                                 robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                                 DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),

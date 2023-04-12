@@ -182,12 +182,12 @@ public abstract class TeleOpBase extends LinearOpMode {
                     }
                 }
             } else {
-                if (currentTask.perform() || gp2.onceX()) {
+                if (currentTask != null && (currentTask.perform() || gp2.onceX())) {
                     currentTask.cancel();
                     currentTask = null;
                 }
                 robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY());
-                robot.setIntakeSlidePowerWithoutEncoder(-gp2.rightStickY());
+                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY());
             }
 
             if (gp2.onceBack()) {
@@ -196,11 +196,7 @@ public abstract class TeleOpBase extends LinearOpMode {
                 if (resetIntakeTask != null) resetIntakeTask.cancel();
                 resetIntakeTask = null;
                 debugMode = !debugMode;
-                if (debugMode) {
-                    currentTask = new ParallelTask(
-                            getPickUpConeTask(),
-                            new DeliverySlideTask(robot, 0));
-                } else {
+                if (!debugMode) {
                     robot.restartMotors();
                 }
             }

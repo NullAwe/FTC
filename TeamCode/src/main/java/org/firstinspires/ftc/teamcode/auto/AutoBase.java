@@ -19,9 +19,10 @@ public abstract class AutoBase extends LinearOpMode {
     protected final ElapsedTime timer = new ElapsedTime();
     protected HDWorldRobotBase robot;
     protected AutoState state = AutoState.INIT;
-    protected int cycleNumber = 0;
     protected TrajectorySequence prevSeq;
     protected TrajectorySequence currSeq;
+
+    protected AutoStates autoStates = new AutoStates.Builder().build();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,7 +57,9 @@ public abstract class AutoBase extends LinearOpMode {
                 task = createFinishTask();
             } else if (task.perform()) {
                 if (hasTimeForOneMoreCycle()) {
-                    cycleNumber++;
+                    if (!autoStates.isConeInDelivery()) {
+                        autoStates.setCycleNumber(autoStates.getCycleNumber() + 1);
+                    }
                     task = createCycleTask();
                 } else if (state != AutoState.FINISH) {
                     task = createFinishTask();
@@ -75,7 +78,7 @@ public abstract class AutoBase extends LinearOpMode {
 
     private boolean hasTimeForOneMoreCycle() {
         // Go ahead if there are still 6 seconds left and .
-        return cycleNumber < AA_NUM_CYCLES && timer.milliseconds() < AA_TOTAL_TIME_MILLIS - 6000;
+        return autoStates.getCycleNumber() < AA_NUM_CYCLES && timer.milliseconds() < AA_TOTAL_TIME_MILLIS - 6000;
     }
 
     private void resetRobot() {
