@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.util.GamePad;
 /**
  * TeleOp Base Class with complete different functionalities.
  */
+
+// make it work when it doesn't (color)
 @Config
 public abstract class TeleOpBase extends LinearOpMode {
     // A distance indicating that a cone is close enough to pickup. Any distance larger than that is
@@ -186,11 +188,11 @@ public abstract class TeleOpBase extends LinearOpMode {
                     currentTask.cancel();
                     currentTask = null;
                 }
-                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY());
-                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY());
+                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY() * 0.6);
+                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY() * 0.6);
             }
 
-            if (gp2.onceBack()) {
+            if (gp2.back() && gp2.onceX()) {
                 if (currentTask != null) currentTask.cancel();
                 currentTask = null;
                 if (resetIntakeTask != null) resetIntakeTask.cancel();
@@ -350,7 +352,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     }
 
     private double getDeliveryHeightMax() {
-        return robot.getDeliveryHeightHigh();
+        return robot.getDeliveryHeightHigh() + 3;
     }
 
     protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry);
