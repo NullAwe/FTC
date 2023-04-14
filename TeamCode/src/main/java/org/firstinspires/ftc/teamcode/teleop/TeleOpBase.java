@@ -26,8 +26,6 @@ import org.firstinspires.ftc.teamcode.util.GamePad;
 /**
  * TeleOp Base Class with complete different functionalities.
  */
-
-// make it work when it doesn't (color)
 @Config
 public abstract class TeleOpBase extends LinearOpMode {
     // A distance indicating that a cone is close enough to pickup. Any distance larger than that is
