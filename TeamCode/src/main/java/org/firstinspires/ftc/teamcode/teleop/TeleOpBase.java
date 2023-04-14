@@ -182,26 +182,22 @@ public abstract class TeleOpBase extends LinearOpMode {
                     }
                 }
             } else {
-                if (Math.abs(gp2.leftStickY()) > 0.1) {
-
+                if (currentTask != null && (currentTask.perform() || gp2.onceX())) {
+                    currentTask.cancel();
+                    currentTask = null;
                 }
-                if (Math.abs(gp2.rightStickY()) > 0.1) {
-
-                }
+                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY() * 0.6);
+                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY() * 0.6);
             }
 
-            if (gp2.onceBack()) {
-                if (debugMode) debugMode = false;
-                else {
-                    debugMode = true;
-                    if (currentTask != null) {
-                        currentTask.cancel();
-                        currentTask = null;
-                    }
-                    if (resetIntakeTask != null) {
-                        resetIntakeTask.cancel();
-                        resetIntakeTask = null;
-                    }
+            if (gp2.back() && gp2.onceX()) {
+                if (currentTask != null) currentTask.cancel();
+                currentTask = null;
+                if (resetIntakeTask != null) resetIntakeTask.cancel();
+                resetIntakeTask = null;
+                debugMode = !debugMode;
+                if (!debugMode) {
+                    robot.restartMotors();
                 }
             }
 
@@ -358,7 +354,7 @@ public abstract class TeleOpBase extends LinearOpMode {
     }
 
     private double getDeliveryHeightMax() {
-        return robot.getDeliveryHeightHigh();
+        return robot.getDeliveryHeightHigh() + 3;
     }
 
     protected abstract HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry);

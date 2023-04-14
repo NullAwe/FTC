@@ -115,7 +115,7 @@ public class DetectorBase {
             if (cancelRequested) return null;
 
             HSV hsv = RgbToHsvFast(bitmap.getPixel(j, at));
-            objectArea[j] = filter.fitler(hsv);
+            objectArea[j] = filter.filter(hsv);
         }
         return objectArea;
     }
@@ -177,7 +177,7 @@ public class DetectorBase {
 
                 HSV hsv = RgbToHsvFast(bitmap.getPixel(j * DEBUG_PIXEL_SKIP_STEP,
                         i * DEBUG_PIXEL_SKIP_STEP));
-                int val = filter.fitler(hsv);
+                int val = filter.filter(hsv);
                 int index = i * newW + j;
                 int hue = (int) hsv.h;
                 debugImages.color1[index] = hue | hue << 8 | hue << 16 | hue << 24;

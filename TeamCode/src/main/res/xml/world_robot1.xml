@@ -17,7 +17,8 @@
             <goBILDA5202SeriesMotor name="rightRear" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <RevColorSensorV3 name="clawColorSensor" port="1" bus="0" />
+            <RevColorSensorV3 name="deliveryColorSensor" port="0" bus="1" />
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="backWebcam" serialNumber="F9A49060" />
+    <Webcam name="backWebcam" serialNumber="2E2D8060" />
 </Robot>

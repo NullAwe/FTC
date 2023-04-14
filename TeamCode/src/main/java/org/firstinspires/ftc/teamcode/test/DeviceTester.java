@@ -160,6 +160,18 @@ public class DeviceTester extends LinearOpMode {
                         Boolean.toString(robot.isBlueCone()),
                         Boolean.toString(robot.isRedCone()),
                         Boolean.toString(robot.isPole()));
+
+                HSV hsv2 = ImageProcessor.ColorToHsv(robot.getDeliveryColor());
+                multipleTelemetry.addData("delivery color sensor", "H: %d, S: %d, V: %d, dist: %f",
+                        (int) hsv2.h, (int) hsv2.s, (int) hsv2.v, robot.getDeliveryDistanceInch());
+                multipleTelemetry.addData("delivery cone color",
+                        "blue: %s, red: %s",
+                        Boolean.toString(robot.isBlueCone(hsv2)),
+                        Boolean.toString(robot.isRedCone(hsv2)));
+
+                multipleTelemetry.addData("delivery has cone",
+                        Boolean.toString(robot.deliveryHasCone()));
+
                 multipleTelemetry.addData("IMU ori",
                         "Heading: %f, hV: %f, xAV: %f, yAV: %f, zAV: %f",
                         robot.getExternalHeading(),
