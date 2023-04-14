@@ -84,7 +84,27 @@ public abstract class TeleOpBase extends LinearOpMode {
             // Call this every cycle to cache the encoder position and velocity.
             robot.updateEncoderValues();
 
-            if (!debugMode) {
+            // Getting into the debug mode.
+            if (gp2.back() && gp2.onceX()) {
+                if (currentTask != null) {
+                    currentTask.cancel();
+                    currentTask = null;
+                }
+                if (resetIntakeTask != null) {
+                    resetIntakeTask.cancel();
+                    resetIntakeTask = null;
+                }
+                debugMode = !debugMode;
+                if (!debugMode) {
+                    robot.restartMotors();
+                }
+            }
+
+            if (debugMode) {
+                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY() * 0.6);
+                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY() * 0.6);
+                telemetry.addData("State", "Debug mode - gp2 X and Back to quit");
+            } else {
                 driveRobot(gp1);
                 if (gp1.onceA()) {
                     robot.toggleConeRighter();
@@ -180,24 +200,6 @@ public abstract class TeleOpBase extends LinearOpMode {
                             currentTask = getSecureConeTask();
                         }
                     }
-                }
-            } else {
-                if (currentTask != null && (currentTask.perform() || gp2.onceX())) {
-                    currentTask.cancel();
-                    currentTask = null;
-                }
-                robot.setDeliverySlidePowerWithoutEncoder(-gp2.leftStickY() * 0.6);
-                robot.setIntakeSlidePowerWithoutEncoder(gp2.rightStickY() * 0.6);
-            }
-
-            if (gp2.back() && gp2.onceX()) {
-                if (currentTask != null) currentTask.cancel();
-                currentTask = null;
-                if (resetIntakeTask != null) resetIntakeTask.cancel();
-                resetIntakeTask = null;
-                debugMode = !debugMode;
-                if (!debugMode) {
-                    robot.restartMotors();
                 }
             }
 
