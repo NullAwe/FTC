@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.task.IntakeClawTask;
 import org.firstinspires.ftc.teamcode.task.IntakeRotateTask;
 import org.firstinspires.ftc.teamcode.task.IntakeSlideTask;
 import org.firstinspires.ftc.teamcode.task.ParallelTask;
+import org.firstinspires.ftc.teamcode.task.PoleDetectionTask;
 import org.firstinspires.ftc.teamcode.task.Robot1AutoCycleTask;
 import org.firstinspires.ftc.teamcode.task.Robot1AutoNormalDeliveryTask;
 import org.firstinspires.ftc.teamcode.task.SeriesTask;
@@ -60,7 +61,9 @@ public abstract class AutoBaseRobot1Exp extends AutoBase {
                         new SleepTask(PRELOAD_DELIVERY_DELAY_MILLIS),
                         new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(), POWER_DELIVERY),
                         new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)),
-                new DrivingTask(robot, autoStates.getCurrSeq()));
+                new SeriesTask(
+                        new DrivingTask(robot, autoStates.getCurrSeq()),
+                        new PoleDetectionTask(robot, autoStates)));
     }
 
     @Override

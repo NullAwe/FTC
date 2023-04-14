@@ -18,14 +18,21 @@ import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.POW
 import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS;
 import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.WAIT_PRIOR_RETRACT_MILLIS;
 
+import android.util.Log;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.auto.AutoStates;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.util.objectdetector.PoleDetector;
 
+@Config
 public class Robot1AutoCycleTask implements Task {
+
+    public static int FAILED_OFFSET_INCHES = 2;
 
     private final HDWorldRobotBase robot;
     private final AutoStates autoStates;
@@ -34,6 +41,7 @@ public class Robot1AutoCycleTask implements Task {
     private Task currentTask;
     private State currentState;
     private double yOffset;
+    private double addToPickupOffset;
 
     public Robot1AutoCycleTask(HDWorldRobotBase robot, AutoStates autoStates, int sign) {
         this.robot = robot;
@@ -42,6 +50,7 @@ public class Robot1AutoCycleTask implements Task {
         currentTask = null;
         currentState = State.INITIALIZED;
         yOffset = 0.0;
+        addToPickupOffset = 0;
     }
 
     @Override
@@ -52,7 +61,8 @@ public class Robot1AutoCycleTask implements Task {
                 TrajectorySequenceBuilder forwardSeq =
                         robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
                 forwardSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
-                        -sign * (DIST_DRIVE_PICKUP + yOffset), -sign * Math.toRadians(90)));
+                        -sign * (DIST_DRIVE_PICKUP + yOffset + autoStates.getCurPickupOffset()),
+                        -sign * Math.toRadians(90)));
                 autoStates.setCurrSeq(forwardSeq.build());
                 // moving forwards task:
                 currentTask = new ParallelTask(
@@ -79,10 +89,21 @@ public class Robot1AutoCycleTask implements Task {
             case MOVING_FORWARDS:
                 if (currentTask.perform()) {
                     if (autoStates.isConeInDelivery()) {
+                        PoleDetector.AngleAndDist angleAndDist = autoStates.getPoleAngleAndDist();
+                        if (angleAndDist == null || angleAndDist.dist > 100) {
+                            autoStates.changeCurDeliveryOffset(-2 * FAILED_OFFSET_INCHES * sign);
+                        } else if (angleAndDist.angle * sign < -15) {
+                            autoStates.changeCurDeliveryOffset(-FAILED_OFFSET_INCHES * sign);
+                        } else if (angleAndDist.angle * sign > -2) {
+                            autoStates.changeCurDeliveryOffset(FAILED_OFFSET_INCHES * sign);
+                        }
+                        Log.i("allendebug", angleAndDist == null ? "null" : angleAndDist.angle +
+                                "");
+                        Log.i("allendebug", "offset " + autoStates.getCurDeliveryOffset());
                         TrajectorySequenceBuilder backSeq =
                                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-                        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, yOffset,
-                                -sign * Math.toRadians(90)));
+                        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                                yOffset + autoStates.getCurDeliveryOffset(), -sign * Math.toRadians(90)));
                         autoStates.setCurrSeq(backSeq.build());
                         // moving back task:
                         currentTask = new ParallelTask(
@@ -91,16 +112,15 @@ public class Robot1AutoCycleTask implements Task {
                                         new IntakeSlideTask(robot,
                                                 (5 - autoStates.getCycleNumber()) * DIST_INTAKE_SLIDE_STEP,
                                                 POWER_INTAKE_DOWN, DURATION_INTAKE_SLIDE_DOWN_MILLIS),
-                                        new IntakeClawTask(robot, true)
-                                ),
+                                        new IntakeClawTask(robot, true)),
                                 new SeriesTask(
                                         // wait more because no intake movements:
                                         new SleepTask(DELAY_PRIOR_DELIVERY_MILLIS + 500),
                                         new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(), POWER_DELIVERY),
-                                        new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)
-                                ),
-                                new DrivingTask(robot, autoStates.getCurrSeq())
-                        );
+                                        new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)),
+                                new SeriesTask(
+                                        new DrivingTask(robot, autoStates.getCurrSeq()),
+                                        new PoleDetectionTask(robot, autoStates)));
                         currentState = State.MOVING_BACK_AND_DELIVERING;
                     } else {
                         if (robot.isCone() && robot.getConeDistanceInch() < 0.8) {
@@ -113,8 +133,10 @@ public class Robot1AutoCycleTask implements Task {
                             TrajectorySequenceBuilder forwardSeq2 =
                                     robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
                             forwardSeq2.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
-                                    -sign * (DIST_DRIVE_PICKUP + yOffset + 2),
+                                    -sign * (DIST_DRIVE_PICKUP + yOffset + 2 +
+                                            autoStates.getCurPickupOffset()),
                                     -sign * Math.toRadians(90)));
+                            addToPickupOffset += 1.0;
                             autoStates.setCurrSeq(forwardSeq2.build());
                             // intake first task:
                             currentTask = new ParallelTask(
@@ -137,9 +159,11 @@ public class Robot1AutoCycleTask implements Task {
                         TrajectorySequenceBuilder forwardSeq3 =
                                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
                         forwardSeq3.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
-                                -sign * (DIST_DRIVE_PICKUP + yOffset + 4),
+                                -sign * (DIST_DRIVE_PICKUP + yOffset + 4 +
+                                        autoStates.getCurPickupOffset()),
                                 -sign * Math.toRadians(90)));
                         autoStates.setCurrSeq(forwardSeq3.build());
+                        addToPickupOffset += 1.0;
                         // intake second task:
                         currentTask = new ParallelTask(
                                 new IntakeClawTask(robot, IntakeClawTask.State.FULL_OPEN),
@@ -161,7 +185,8 @@ public class Robot1AutoCycleTask implements Task {
                 break;
             case MOVING_BACK_AND_DELIVERING:
                 if (currentTask.perform()) {
-                    currentTask = new SleepTask(0); // delivery task:
+                    autoStates.changeCurPickupOffset(addToPickupOffset);
+                    Log.i("allendebug", "pickup offset " + autoStates.getCurPickupOffset());
                     currentState = State.FINISHED;
                 }
                 break;
@@ -174,7 +199,7 @@ public class Robot1AutoCycleTask implements Task {
     private Task generateNormalMovingBackTask() {
         TrajectorySequenceBuilder backSeq =
                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, yOffset,
+        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, yOffset + autoStates.getCurDeliveryOffset(),
                 -sign * Math.toRadians(90)));
         autoStates.setCurrSeq(backSeq.build());
         return new ParallelTask(
@@ -200,7 +225,9 @@ public class Robot1AutoCycleTask implements Task {
                                 robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                 DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                         new Robot1AutoNormalDeliveryTask(robot, autoStates)),
-                new DrivingTask(robot, autoStates.getCurrSeq()));
+                new SeriesTask(
+                        new DrivingTask(robot, autoStates.getCurrSeq()),
+                        new PoleDetectionTask(robot, autoStates)));
     }
 
     private enum State {

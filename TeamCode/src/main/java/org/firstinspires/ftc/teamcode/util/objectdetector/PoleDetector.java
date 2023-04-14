@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.util.objectdetector;
 
 import static org.firstinspires.ftc.teamcode.util.objectdetector.ImageProcessor.YELLOW_VALUE;
+import static org.firstinspires.ftc.teamcode.util.objectdetector.ImageProcessor.isBlueOrRedWithMinSaturation;
 import static org.firstinspires.ftc.teamcode.util.objectdetector.ImageProcessor.isYellowWithMinSaturation;
 
 import android.graphics.Bitmap;
 
 public class  PoleDetector extends DetectorBase {
     // Minimal number of pixel representing the pole width in the image.
-    private final static int MIN_POLE_WIDTH = 50;
+    private final static int MIN_POLE_WIDTH = 25;
     private final static double POLE_RADIUS = 0.5;
     private final static String TAG = PoleDetector.class.getSimpleName();
 
@@ -32,17 +33,17 @@ public class  PoleDetector extends DetectorBase {
             return angleAndDist;
         }
         int imageH = bitmap.getHeight();
-
         // Get the center line with only red, blue and yellow color.
-        PixelFilter filter = hsv -> isYellowWithMinSaturation(hsv) ? YELLOW_VALUE : 0;
-//        PixelFilter filter = hsv -> isRedWithMinSaturation(hsv) ? RED_VALUE : 0;
+        PixelFilter filter =
+                hsv -> isYellowWithMinSaturation(hsv) || isBlueOrRedWithMinSaturation(hsv) ?
+                        YELLOW_VALUE : 0;
         int[] arr = extractCenterLine(bitmap, filter);
         Segment seg = findLongestSegment(arr, MIN_POLE_WIDTH);
         if (seg.length() == 0) {
-            arr = extractLineAt(bitmap, imageH / 2 + 100, filter);
+            arr = extractLineAt(bitmap, imageH / 2 - 100, filter);
             seg = findLongestSegment(arr, MIN_POLE_WIDTH);
             if (seg.length() == 0) {
-                arr = extractLineAt(bitmap, imageH / 2 + 200, filter);
+                arr = extractLineAt(bitmap, imageH / 2 - 200, filter);
                 seg = findLongestSegment(arr, MIN_POLE_WIDTH);
             }
         }
