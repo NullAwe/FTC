@@ -11,8 +11,15 @@ import org.firstinspires.ftc.teamcode.drive.robot2.WorldRobot2;
 
 @TeleOp(name="Tele-Op - Robot 2", group="competition")
 public class TeleOpRobot2 extends TeleOpBase {
+    public static int DELIVERY_DELAY_MILLIS = 500;
+
     @Override
     protected HDWorldRobotBase createRobot(HardwareMap hardwareMap, Telemetry telemetry) {
         return new WorldRobot2(hardwareMap, telemetry);
+    }
+
+    @Override
+    protected int getDeliveryDelay() {
+        return DELIVERY_DELAY_MILLIS;
     }
 }

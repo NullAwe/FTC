@@ -153,13 +153,13 @@ public abstract class TeleOpBase extends LinearOpMode {
                                     robot.getIntakeRotateAngle() + gp2.rightStickX() / 50);
                         } else if (gp2.onceRightBumper() && readyToDeliverCone()) {
                             currentTask = new SeriesTask(
-                                    new SleepTask(DELIVERY_DELAY_MILLIS),
+                                    new SleepTask(getDeliveryDelay()),
                                     new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(),
                                             DELIVERY_POWER));
                             resetIntakeTask = getResetIntakeTask();
                         } else if (gp2.onceLeftBumper() && readyToDeliverCone()) {
                             currentTask = new SeriesTask(
-                                    new SleepTask(DELIVERY_DELAY_MILLIS),
+                                    new SleepTask(getDeliveryDelay()),
                                     new DeliverySlideTask(robot, robot.getDeliveryHeightMedium(),
                                             DELIVERY_POWER));
                             resetIntakeTask = getResetIntakeTask();
@@ -351,6 +351,10 @@ public abstract class TeleOpBase extends LinearOpMode {
 
     private double getIntakeHeightMax() {
         return robot.getIntakeHeightMax();
+    }
+
+    protected int getDeliveryDelay() {
+        return DELIVERY_DELAY_MILLIS;
     }
 
     private double getDeliveryHeightMax() {

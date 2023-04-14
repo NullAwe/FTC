@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.framework.qual.PreconditionAnnotation;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.FeedforwardParams;
@@ -193,8 +194,9 @@ public class WorldRobot2 extends HDWorldRobotBase {
     private final static double DELIVERY_SLIDE_TICKS_PER_INCH =
             DELIVERY_SLIDE_TICKS_PER_REVOLUTION / DELIVERY_SLIDE_INCH_PER_REVOLUTION;
 
+    @Override
     public double getDeliverySlideTicksPerInch() {
-        return DELIVERY_SLIDE_TICKS_PER_INCH;
+        return -DELIVERY_SLIDE_TICKS_PER_INCH;
     }
 
     @Override
@@ -256,5 +258,10 @@ public class WorldRobot2 extends HDWorldRobotBase {
     @Override
     public double getAutoDeliveryRotateAngleDegree() {
         return AUTO_DELIVERY_ROTATE_ANGLE_DEGREE;
+    }
+
+    @Override
+    public double getIntakeHeightMax() {
+        return 20.0;
     }
 }
