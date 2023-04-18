@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.AutoTransitioner;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,6 +27,8 @@ public abstract class AutoBase extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+//        AutoTransitioner.transitionOnStop(this, getTeleOpName());
+
         robot = createRobot(hardwareMap, telemetry);
         resetRobot();
         Task task = createStartTask();

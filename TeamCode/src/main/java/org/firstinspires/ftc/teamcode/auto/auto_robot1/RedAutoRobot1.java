@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
-@Autonomous(name="Auto - Robot 1 - Red", group="Auto1Exp")
+@Autonomous(name="Auto - Robot 1 - Red", group="_competition")
 public class RedAutoRobot1 extends AutoBaseRobot1 {
     @Override
     protected boolean isBlueCorner() {

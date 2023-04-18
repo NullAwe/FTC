@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.testopmode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,6 +19,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @SuppressWarnings({"unused", "RedundantThrows"})
 @TeleOp(name="Open CV Test", group="Test")
+@Disabled
 public class OpenCVTest extends LinearOpMode {
 
     OpenCvWebcam webcam;

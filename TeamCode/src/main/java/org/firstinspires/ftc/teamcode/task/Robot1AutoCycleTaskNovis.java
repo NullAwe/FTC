@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode.task;
 
 import static org.firstinspires.ftc.teamcode.auto.AutoBase.AA_NUM_CYCLES;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DELAY_INTAKE_ROTATE_BASE_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DELAY_INTAKE_ROTATE_STEP_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DELAY_PRIOR_DELIVERY_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DIST_DRIVE_BACK_OFFSET;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DIST_DRIVE_PICKUP;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DIST_DRIVE_START;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DIST_INTAKE_DELIVERY_DROP_CYCLE;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DIST_INTAKE_SLIDE_STEP;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DURATION_INTAKE_SLIDE_DOWN_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.DURATION_INTAKE_SLIDE_UP_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.POWER_DELIVERY;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.POWER_INTAKE_DOWN;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.POWER_INTAKE_UP;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.POWER_RETRACT;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS;
-import static org.firstinspires.ftc.teamcode.auto.auto_robot1.AutoBaseRobot1.WAIT_PRIOR_RETRACT_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_INTAKE_ROTATE_BASE_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_INTAKE_ROTATE_STEP_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_PRIOR_DELIVERY_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DIST_DRIVE_BACK_OFFSET;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DIST_DRIVE_PICKUP;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DIST_DRIVE_START;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DIST_INTAKE_DELIVERY_DROP_CYCLE;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DIST_INTAKE_SLIDE_STEP;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DURATION_INTAKE_SLIDE_DOWN_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DURATION_INTAKE_SLIDE_UP_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.POWER_DELIVERY;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.POWER_INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.POWER_INTAKE_UP;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.POWER_RETRACT;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.WAIT_PRIOR_RETRACT_MILLIS;
 
 import android.util.Log;
 
@@ -28,12 +28,9 @@ import org.firstinspires.ftc.teamcode.auto.AutoStates;
 import org.firstinspires.ftc.teamcode.common.AngleType;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.util.objectdetector.PoleDetector;
 
 @Config
-public class Robot1AutoCycleTask implements Task {
-
-    public static int FAILED_OFFSET_INCHES = 2;
+public class Robot1AutoCycleTaskNovis implements Task {
 
     private final HDWorldRobotBase robot;
     private final AutoStates autoStates;
@@ -44,7 +41,7 @@ public class Robot1AutoCycleTask implements Task {
     private double yOffset;
     private double addToPickupOffset;
 
-    public Robot1AutoCycleTask(HDWorldRobotBase robot, AutoStates autoStates, int sign) {
+    public Robot1AutoCycleTaskNovis(HDWorldRobotBase robot, AutoStates autoStates, int sign) {
         this.robot = robot;
         this.autoStates = autoStates;
         this.sign = sign;
@@ -90,17 +87,6 @@ public class Robot1AutoCycleTask implements Task {
             case MOVING_FORWARDS:
                 if (currentTask.perform()) {
                     if (autoStates.isConeInDelivery()) {
-                        PoleDetector.AngleAndDist angleAndDist = autoStates.getPoleAngleAndDist();
-                        if (angleAndDist == null || angleAndDist.dist > 100) {
-                            autoStates.changeCurDeliveryOffset(-2 * FAILED_OFFSET_INCHES * sign);
-                        } else if (angleAndDist.angle * sign < -15) {
-                            autoStates.changeCurDeliveryOffset(-FAILED_OFFSET_INCHES * sign);
-                        } else if (angleAndDist.angle * sign > -2) {
-                            autoStates.changeCurDeliveryOffset(FAILED_OFFSET_INCHES * sign);
-                        }
-                        Log.i("allendebug", angleAndDist == null ? "null" : angleAndDist.angle +
-                                "");
-                        Log.i("allendebug", "offset " + autoStates.getCurDeliveryOffset());
                         TrajectorySequenceBuilder backSeq =
                                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
                         backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
@@ -120,9 +106,7 @@ public class Robot1AutoCycleTask implements Task {
                                         new SleepTask(DELAY_PRIOR_DELIVERY_MILLIS + 500),
                                         new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(), POWER_DELIVERY),
                                         new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)),
-                                new SeriesTask(
-                                        new DrivingTask(robot, autoStates.getCurrSeq()),
-                                        new PoleDetectionTask(robot, autoStates)));
+                                new DrivingTask(robot, autoStates.getCurrSeq()));
                         currentState = State.MOVING_BACK_AND_DELIVERING;
                     } else {
                         if (robot.isCone() && robot.getConeDistanceInch() < 0.8) {
@@ -212,14 +196,14 @@ public class Robot1AutoCycleTask implements Task {
                                         POWER_INTAKE_UP, DURATION_INTAKE_SLIDE_UP_MILLIS),
                                 new SeriesTask(
                                         new SleepTask(DELAY_INTAKE_ROTATE_BASE_MILLIS +
-                                                        (autoStates.getCycleNumber() - 1) *
-                                                                DELAY_INTAKE_ROTATE_STEP_MILLIS),
+                                                (autoStates.getCycleNumber() - 1) *
+                                                        DELAY_INTAKE_ROTATE_STEP_MILLIS),
                                         new IntakeRotateTask(robot,
                                                 robot.getIntakeDeliveryRotateDegree(),
                                                 AngleType.DEGREE))),
                         new ParallelTask(
                                 new IntakeSlideTask(robot, robot.getAutoIntakeDeliveryHeightInch() -
-                                                DIST_INTAKE_DELIVERY_DROP_CYCLE, 1.0,
+                                        DIST_INTAKE_DELIVERY_DROP_CYCLE, 1.0,
                                         DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                                 new SeriesTask(
                                         new SleepTask(DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS - 110),
@@ -228,9 +212,7 @@ public class Robot1AutoCycleTask implements Task {
                                 robot.getAutoIntakeDeliveryHeightInch(), 1.0,
                                 DURATION_INTAKE_SLIDE_DROP_CYCLE_MILLIS),
                         new Robot1AutoNormalDeliveryTask(robot, autoStates)),
-                new SeriesTask(
-                        new DrivingTask(robot, autoStates.getCurrSeq()),
-                        new PoleDetectionTask(robot, autoStates)));
+                new DrivingTask(robot, autoStates.getCurrSeq()));
     }
 
     private enum State {

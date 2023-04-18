@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.auto_robot1_exp;
+package org.firstinspires.ftc.teamcode.auto.auto_robot1_novis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,11 +7,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HDWorldRobotBase;
 import org.firstinspires.ftc.teamcode.drive.robot1.WorldRobot1;
 
-@Autonomous(name="Exp - Robot 1 - Blue", group="Auto1Exp")
-public class BlueAutoRobot1Exp extends AutoBaseRobot1Exp {
+@Autonomous(name="Auto - Robot 1 - Red (Novis)", group="_competition")
+public class RedAutoRobot1Novis extends AutoBaseRobot1Novis {
     @Override
     protected boolean isBlueCorner() {
-        return true;
+        return false;
     }
 
     @Override
