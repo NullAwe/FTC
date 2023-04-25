@@ -4,9 +4,9 @@
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="deliverySlide" port="1" />
             <goBILDA5202SeriesMotor name="intakeSlide" port="3" />
-            <Servo name="intakeClaw" port="0" />
-            <Servo name="coneRighter" port="1" />
-            <Servo name="for_robot_1_only" port="5" />
+            <Servo name="intakeClaw" port="4" />
+            <Servo name="coneRighter" port="5" />
+            <Servo name="for_robot_1_only" port="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <Servo name="deliveryRotate" port="1" />
