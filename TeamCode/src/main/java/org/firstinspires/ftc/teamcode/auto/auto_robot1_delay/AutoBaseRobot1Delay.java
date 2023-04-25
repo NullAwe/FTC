@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.auto_robot1;
+package org.firstinspires.ftc.teamcode.auto.auto_robot1_delay;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -22,9 +22,11 @@ import org.firstinspires.ftc.teamcode.task.SleepTask;
 import org.firstinspires.ftc.teamcode.task.Task;
 
 @Config
-public abstract class AutoBaseRobot1 extends AutoBase {
+public abstract class AutoBaseRobot1Delay extends AutoBase {
 
-    public static double DIST_DRIVE_START = 51;
+    public static int AA_FIRST_DELAY = 5000;
+
+    public static double DIST_DRIVE_START = 51.5;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot
@@ -34,9 +36,11 @@ public abstract class AutoBaseRobot1 extends AutoBase {
     // The intake slide drop distance before dropping the cone (for the 5-cycle run)
     public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 3;
 
+    public static double CYCLE_OFFSET_X = 0.3;
+
     // Pause time before retracing the delivery slide.
     public static int WAIT_PRIOR_RETRACT_MILLIS = 120;
-    public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 200;
+    public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 250;
     public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
     public static int DELAY_INTAKE_ROTATE_BASE_MILLIS = 140;
     public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 40;
@@ -61,23 +65,25 @@ public abstract class AutoBaseRobot1 extends AutoBase {
                 .lineToLinearHeading(new Pose2d(-DIST_DRIVE_START, 0, 0))
                 .turn(-getSign() * Math.toRadians(90), 3 * WorldRobot1.MAX_ANG_VEL,
                         1.5 * WorldRobot1.MAX_ANG_ACCEL).build());
-        return new ParallelTask(
-                new SeriesTask(
-                        new DeliveryRotateTask(robot,
-                                robot.getAutoDeliveryRotateAngleDegree() * getSign(),
-                                AngleType.DEGREE),
-                        new ParallelTask(
-                                new IntakeSlideTask(robot,
-                                        (5 - autoStates.getCycleNumber()) * DIST_INTAKE_SLIDE_STEP,
-                                        POWER_INTAKE_DOWN, DURATION_INTAKE_SLIDE_DOWN_MILLIS),
-                                new IntakeRotateTask(robot, 0, AngleType.DEGREE),
-                                new IntakeClawTask(robot, true)),
-                        new SleepTask(PRELOAD_DELIVERY_DELAY_MILLIS),
-                        new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(), POWER_DELIVERY),
-                        new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)),
-                new SeriesTask(
-                        new DrivingTask(robot, autoStates.getCurrSeq()),
-                        new PoleDetectionTask(robot, autoStates)));
+        return new SeriesTask(
+                new SleepTask(AA_FIRST_DELAY),
+                new ParallelTask(
+                        new SeriesTask(
+                                new DeliveryRotateTask(robot,
+                                        robot.getAutoDeliveryRotateAngleDegree() * getSign(),
+                                        AngleType.DEGREE),
+                                new ParallelTask(
+                                        new IntakeSlideTask(robot,
+                                                (5 - autoStates.getCycleNumber()) * DIST_INTAKE_SLIDE_STEP,
+                                                POWER_INTAKE_DOWN, DURATION_INTAKE_SLIDE_DOWN_MILLIS),
+                                        new IntakeRotateTask(robot, 0, AngleType.DEGREE),
+                                        new IntakeClawTask(robot, true)),
+                                new SleepTask(PRELOAD_DELIVERY_DELAY_MILLIS),
+                                new DeliverySlideTask(robot, robot.getDeliveryHeightHigh(), POWER_DELIVERY),
+                                new SleepTask(WAIT_PRIOR_RETRACT_MILLIS)),
+                        new SeriesTask(
+                                new DrivingTask(robot, autoStates.getCurrSeq()),
+                                new PoleDetectionTask(robot, autoStates))));
     }
 
     @Override

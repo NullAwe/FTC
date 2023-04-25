@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.task.WaitForAnyConditionTask;
 @Config
 public abstract class AutoBaseRobot1Old extends AutoBase {
 
-    public static double DIST_DRIVE_START = 50;
+    public static double DIST_DRIVE_START = 51;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot

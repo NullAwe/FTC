@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.task;
 
 import static org.firstinspires.ftc.teamcode.auto.AutoBase.AA_NUM_CYCLES;
+import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.CYCLE_OFFSET_X;
 import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_INTAKE_ROTATE_BASE_MILLIS;
 import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_INTAKE_ROTATE_STEP_MILLIS;
 import static org.firstinspires.ftc.teamcode.auto.auto_robot1_novis.AutoBaseRobot1Novis.DELAY_PRIOR_DELIVERY_MILLIS;
@@ -58,7 +59,8 @@ public class Robot1AutoCycleTaskNovis implements Task {
                 yOffset = (autoStates.getCycleNumber() - 1) * DIST_DRIVE_BACK_OFFSET;
                 TrajectorySequenceBuilder forwardSeq =
                         robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-                forwardSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                forwardSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START +
+                        autoStates.getCycleNumber() * CYCLE_OFFSET_X * (sign - 1) / 2,
                         -sign * (DIST_DRIVE_PICKUP + yOffset + autoStates.getCurPickupOffset()),
                         -sign * Math.toRadians(90)));
                 autoStates.setCurrSeq(forwardSeq.build());
@@ -89,7 +91,8 @@ public class Robot1AutoCycleTaskNovis implements Task {
                     if (autoStates.isConeInDelivery()) {
                         TrajectorySequenceBuilder backSeq =
                                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-                        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START +
+                                autoStates.getCycleNumber() * CYCLE_OFFSET_X * (sign - 1) / 2,
                                 -sign * yOffset + autoStates.getCurDeliveryOffset(),
                                 -sign * Math.toRadians(90)));
                         autoStates.setCurrSeq(backSeq.build());
@@ -118,7 +121,8 @@ public class Robot1AutoCycleTaskNovis implements Task {
                         } else {
                             TrajectorySequenceBuilder forwardSeq2 =
                                     robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-                            forwardSeq2.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                            forwardSeq2.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START +
+                                    autoStates.getCycleNumber() * CYCLE_OFFSET_X * (sign - 1) / 2,
                                     -sign * (DIST_DRIVE_PICKUP + yOffset + 2 +
                                             autoStates.getCurPickupOffset()),
                                     -sign * Math.toRadians(90)));
@@ -144,7 +148,8 @@ public class Robot1AutoCycleTaskNovis implements Task {
                     } else {
                         TrajectorySequenceBuilder forwardSeq3 =
                                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-                        forwardSeq3.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+                        forwardSeq3.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START +
+                                autoStates.getCycleNumber() * CYCLE_OFFSET_X * (sign - 1) / 2,
                                 -sign * (DIST_DRIVE_PICKUP + yOffset + 4 +
                                         autoStates.getCurPickupOffset()),
                                 -sign * Math.toRadians(90)));
@@ -185,7 +190,8 @@ public class Robot1AutoCycleTaskNovis implements Task {
     private Task generateNormalMovingBackTask() {
         TrajectorySequenceBuilder backSeq =
                 robot.trajectorySequenceBuilder(autoStates.getCurrSeq().end());
-        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START,
+        backSeq.lineToLinearHeading(new Pose2d(-DIST_DRIVE_START +
+                autoStates.getCycleNumber() * CYCLE_OFFSET_X * (sign - 1) / 2,
                 -sign * yOffset + autoStates.getCurDeliveryOffset(),
                 -sign * Math.toRadians(90)));
         autoStates.setCurrSeq(backSeq.build());

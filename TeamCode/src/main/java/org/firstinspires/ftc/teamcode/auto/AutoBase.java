@@ -27,7 +27,7 @@ public abstract class AutoBase extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-//        AutoTransitioner.transitionOnStop(this, getTeleOpName());
+        AutoTransitioner.transitionOnStop(this, getTeleOpName());
 
         robot = createRobot(hardwareMap, telemetry);
         resetRobot();

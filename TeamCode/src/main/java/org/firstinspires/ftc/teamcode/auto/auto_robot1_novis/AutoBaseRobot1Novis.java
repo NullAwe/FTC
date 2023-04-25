@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.task.Task;
 @Config
 public abstract class AutoBaseRobot1Novis extends AutoBase {
 
-    public static double DIST_DRIVE_START = 50;
+    public static double DIST_DRIVE_START = 51.5;
     public static double DIST_DRIVE_END = 23.5;
     public static double DIST_DRIVE_PICKUP = 26;
     // The offset distance when driving backward compared to driving forward to compensate the robot
@@ -34,9 +34,11 @@ public abstract class AutoBaseRobot1Novis extends AutoBase {
     // The intake slide drop distance before dropping the cone (for the 5-cycle run)
     public static double DIST_INTAKE_DELIVERY_DROP_CYCLE = 3;
 
+    public static double CYCLE_OFFSET_X = 0.3;
+
     // Pause time before retracing the delivery slide.
     public static int WAIT_PRIOR_RETRACT_MILLIS = 120;
-    public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 200;
+    public static int WAIT_PRIOR_DRIVE_TO_PICKUP_MILLIS = 250;
     public static int DELAY_PRIOR_DELIVERY_MILLIS = 100;
     public static int DELAY_INTAKE_ROTATE_BASE_MILLIS = 140;
     public static int DELAY_INTAKE_ROTATE_STEP_MILLIS = 40;
